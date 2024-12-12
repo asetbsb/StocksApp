@@ -6,3 +6,12 @@
 //
 
 import Foundation
+
+struct StockLogoData: Codable {
+    let logo: String
+}
+
+struct StockInfoData: Codable {
+    let c: Double
+    let d: Double
+}

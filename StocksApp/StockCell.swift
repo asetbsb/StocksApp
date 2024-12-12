@@ -13,6 +13,8 @@ protocol StarColorDelegate: AnyObject {
 
 final class StockCell: UITableViewCell {
     
+    private var networkingManager = NetworkingManager()
+    
     weak var delegate: StarColorDelegate?
     
     var stockIndex: Int?
@@ -28,7 +30,6 @@ final class StockCell: UITableViewCell {
     
     private lazy var stockImage: UIImageView = {
         let image = UIImageView()
-        image.image = UIImage(named: "Logo")
         
         image.translatesAutoresizingMaskIntoConstraints = false
         return image
@@ -64,7 +65,6 @@ final class StockCell: UITableViewCell {
     
     private lazy var priceLabel: UILabel = {
         let label = UILabel()
-        label.text = "4000"
         label.font = .systemFont(ofSize: 26, weight: .bold)
         
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -91,7 +91,7 @@ final class StockCell: UITableViewCell {
     
     private lazy var rightPriceLabel: UILabel = {
         let label = UILabel()
-        label.text = "+ 1000"
+
         label.font = .systemFont(ofSize: 20)
         label.textColor = .green
         
@@ -116,8 +116,16 @@ final class StockCell: UITableViewCell {
     private func setupUI() {
         self.clipsToBounds = true
         self.layer.cornerRadius = 20
+        
+        setupNetworking()
         addSubviews()
         setConstraints()
+    }
+    
+    func setupNetworking() {
+        networkingManager.delegate = self
+        networkingManager.fetchStockLogo()
+        networkingManager.fetchStockInfo()
     }
     
     func set(_ stock: StockStruct, _ index: Int) {
@@ -200,6 +208,33 @@ final class StockCell: UITableViewCell {
         } else {
             sender.tintColor = .lightGray
             delegate?.didTapStar(stockIndex ?? 0, .lightGray)
+        }
+    }
+}
+
+extension StockCell: StockDataDelegate {
+    func uploadCurrentPrice(_ currentPrice: Double) {
+        DispatchQueue.main.async {
+            self.priceLabel.text = String(currentPrice)
+        }
+    }
+    
+    func uploadPriceChange(_ priceChange: Double) {
+        DispatchQueue.main.async {
+            self.rightPriceLabel.text = String(priceChange)
+        }
+    }
+    
+    func uploadPhotoURL(_ imageURL: String) {
+        if let url = URL(string: imageURL) {
+            URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
+                guard let self = self, let data = data, error == nil,
+                      let image = UIImage(data: data) else { return }
+                
+                DispatchQueue.main.async {
+                    self.stockImage.image = image
+                }
+            }.resume()
         }
     }
 }

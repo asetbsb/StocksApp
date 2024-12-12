@@ -10,8 +10,17 @@ import UIKit
 final class StocksMainVC: UIViewController {
     
     private var stocksBrain = StocksBrain()
+    private var filteredStocks = [StockStruct]()
     
     //MARK: -UI elements
+    
+    private lazy var searchView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .cyan
+        
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     
     private lazy var searchBar: UITextField = {
         let tf = UITextField()
@@ -110,6 +119,7 @@ final class StocksMainVC: UIViewController {
     private func setDelegates() {
         stocksTableview.delegate = self
         stocksTableview.dataSource = self
+        searchBar.delegate = self
     }
     
     private func addSubviews() {
@@ -173,20 +183,23 @@ final class StocksMainVC: UIViewController {
 
 extension StocksMainVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if favoritesButton.isSelected == true {
-            let favoriteCount = stocksBrain.stocks.filter { $0.isFavorite }.count
-            return favoriteCount
-        } else {
-            return stocksBrain.stocks.count
-        }
+        return filteredStocks.isEmpty
+            ? (favoritesButton.isSelected ? stocksBrain.stocks.filter { $0.isFavorite }.count : stocksBrain.stocks.count)
+            : filteredStocks.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: StockCell.identifier) as? StockCell
-        else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: StockCell.identifier) as? StockCell else {
             return UITableViewCell()
         }
-        cell.set(stocksBrain.stocks[indexPath.row], indexPath.row)
+
+        let stock = filteredStocks.isEmpty
+            ? (favoritesButton.isSelected
+                ? stocksBrain.stocks.filter { $0.isFavorite }[indexPath.row]
+                : stocksBrain.stocks[indexPath.row])
+            : filteredStocks[indexPath.row]
+
+        cell.set(stock, indexPath.row)
         cell.delegate = self
         return cell
     }
@@ -207,4 +220,56 @@ extension StocksMainVC: StarColorDelegate {
         stocksTableview.reloadData()
     }
     
+}
+
+extension StocksMainVC: UITextFieldDelegate {
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        self.view.addSubview(searchView)
+        self.view.bringSubviewToFront(searchView)
+        
+        let leftRightSpacing = view.frame.width * 0.05
+        
+        NSLayoutConstraint.activate([
+            searchView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 12),
+            searchView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: leftRightSpacing),
+            searchView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -leftRightSpacing),
+            searchView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+        ])
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        searchBar.endEditing(true)
+        return true
+    }
+
+    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        if textField.text != "" {
+            return true
+        } else {
+            textField.placeholder = "Type something"
+            return false
+        }
+    }
+
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        filterStocks(for: textField.text)
+        self.view.sendSubviewToBack(searchView)
+        searchView.backgroundColor = .clear
+    }
+    
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        filterStocks(for: textField.text)
+        self.view.sendSubviewToBack(searchView)
+        searchView.backgroundColor = .clear
+    }
+
+    private func filterStocks(for query: String?) {
+        if let searchText = query?.lowercased(), !searchText.isEmpty {
+            filteredStocks = stocksBrain.stocks.filter { $0.name.lowercased().contains(searchText) }
+        } else {
+            filteredStocks.removeAll()
+        }
+        stocksTableview.reloadData()
+    }
 }

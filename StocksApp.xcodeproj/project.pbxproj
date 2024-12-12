@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0F115DE42D0A1615005BC43F /* NetworkingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F115DE32D0A1615005BC43F /* NetworkingManager.swift */; };
+		0F115DE62D0A1B3F005BC43F /* StockLogoData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F115DE52D0A1B3F005BC43F /* StockLogoData.swift */; };
 		0FF03EC02CF5CEF400519D49 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF03EBF2CF5CEF400519D49 /* AppDelegate.swift */; };
 		0FF03EC22CF5CEF400519D49 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF03EC12CF5CEF400519D49 /* SceneDelegate.swift */; };
 		0FF03EC42CF5CEF400519D49 /* StocksMainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF03EC32CF5CEF400519D49 /* StocksMainVC.swift */; };
@@ -19,6 +21,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0F115DE32D0A1615005BC43F /* NetworkingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkingManager.swift; sourceTree = "<group>"; };
+		0F115DE52D0A1B3F005BC43F /* StockLogoData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockLogoData.swift; sourceTree = "<group>"; };
 		0FF03EBC2CF5CEF400519D49 /* StocksApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StocksApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FF03EBF2CF5CEF400519D49 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0FF03EC12CF5CEF400519D49 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -65,7 +69,9 @@
 				0FF03ED32CF5CF8500519D49 /* Supporting */,
 				0FF03EC32CF5CEF400519D49 /* StocksMainVC.swift */,
 				0FF03ED62CF5FD3B00519D49 /* StockCell.swift */,
+				0F115DE32D0A1615005BC43F /* NetworkingManager.swift */,
 				0FF03ED42CF5EC5C00519D49 /* CustomUIClasses.swift */,
+				0F115DE52D0A1B3F005BC43F /* StockLogoData.swift */,
 				0FF03ECD2CF5CEF600519D49 /* Info.plist */,
 				0FF03EDA2CF6103500519D49 /* StockStruct.swift */,
 				0FF03EDC2CF6106F00519D49 /* StocksBrain.swift */,
@@ -159,8 +165,10 @@
 				0FF03EC02CF5CEF400519D49 /* AppDelegate.swift in Sources */,
 				0FF03EC22CF5CEF400519D49 /* SceneDelegate.swift in Sources */,
 				0FF03EDD2CF6106F00519D49 /* StocksBrain.swift in Sources */,
+				0F115DE42D0A1615005BC43F /* NetworkingManager.swift in Sources */,
 				0FF03ED52CF5EC5C00519D49 /* CustomUIClasses.swift in Sources */,
 				0FF03ED72CF5FD3B00519D49 /* StockCell.swift in Sources */,
+				0F115DE62D0A1B3F005BC43F /* StockLogoData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
