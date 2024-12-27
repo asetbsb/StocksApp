@@ -9,6 +9,7 @@ import Foundation
 
 struct StockLogoData: Codable {
     let logo: String
+    let name: String
 }
 
 struct StockInfoData: Codable {

@@ -16,9 +16,7 @@ final class StockCell: UITableViewCell {
     private var networkingManager = NetworkingManager()
     
     weak var delegate: StarColorDelegate?
-    
     var stockIndex: Int?
-    
     static var identifier = "TableViewCellIdentifier"
     
     private lazy var containerView: UIView = {
@@ -30,6 +28,8 @@ final class StockCell: UITableViewCell {
     
     private lazy var stockImage: UIImageView = {
         let image = UIImageView()
+        image.clipsToBounds = true
+        image.layer.cornerRadius = 12
         
         image.translatesAutoresizingMaskIntoConstraints = false
         return image
@@ -117,25 +117,60 @@ final class StockCell: UITableViewCell {
         self.clipsToBounds = true
         self.layer.cornerRadius = 20
         
-        setupNetworking()
         addSubviews()
         setConstraints()
     }
     
-    func setupNetworking() {
-        networkingManager.delegate = self
-        networkingManager.fetchStockLogo()
-        networkingManager.fetchStockInfo()
+    func setupNetworking(_ ticker: String) {
+        networkingManager.fetchStockLogo(ticker) { result in
+            switch result {
+            case .success(let (name, logoURL)):
+                self.uploadPhotoURL(logoURL)
+                DispatchQueue.main.async {
+                    self.leftTitle.text = name
+                }
+            case .failure(let error):
+                print("Error fetching logo: \(error)")
+            }
+        }
+
+        // Fetch Stock Info
+        networkingManager.fetchStockInfo(ticker) { result in
+            switch result {
+            case .success(let (currentPrice, priceChange)):
+                DispatchQueue.main.async {
+                    self.priceLabel.text = String(currentPrice)
+                    self.rightPriceLabel.text = String(priceChange)
+                }
+            case .failure(let error):
+                print("Error fetching stock info: \(error)")
+            }
+        }
+    }
+    
+    func uploadPhotoURL(_ imageURL: String) {
+        if let url = URL(string: imageURL) {
+            URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
+                guard let self = self, let data = data, error == nil,
+                      let image = UIImage(data: data) else { return }
+                
+                DispatchQueue.main.async {
+                    self.stockImage.image = image
+                }
+            }.resume()
+        }
     }
     
     func set(_ stock: StockStruct, _ index: Int) {
-        titleLabel.text = stock.name
+        titleLabel.text = stock.ticker
         if stock.isFavorite {
             starButton.tintColor = .yellow
         } else {
             starButton.tintColor = .lightGray
         }
         stockIndex = index
+        
+        setupNetworking(stock.ticker)
     }
     
     private func addSubviews() {
@@ -201,7 +236,6 @@ final class StockCell: UITableViewCell {
     
     @objc
     private func starPressed(_ sender: UIButton) {
-        print("star pressed")
         if sender.tintColor == .lightGray {
             sender.tintColor = .yellow
             delegate?.didTapStar(stockIndex ?? 0, .yellow)
@@ -212,29 +246,3 @@ final class StockCell: UITableViewCell {
     }
 }
 
-extension StockCell: StockDataDelegate {
-    func uploadCurrentPrice(_ currentPrice: Double) {
-        DispatchQueue.main.async {
-            self.priceLabel.text = String(currentPrice)
-        }
-    }
-    
-    func uploadPriceChange(_ priceChange: Double) {
-        DispatchQueue.main.async {
-            self.rightPriceLabel.text = String(priceChange)
-        }
-    }
-    
-    func uploadPhotoURL(_ imageURL: String) {
-        if let url = URL(string: imageURL) {
-            URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
-                guard let self = self, let data = data, error == nil,
-                      let image = UIImage(data: data) else { return }
-                
-                DispatchQueue.main.async {
-                    self.stockImage.image = image
-                }
-            }.resume()
-        }
-    }
-}

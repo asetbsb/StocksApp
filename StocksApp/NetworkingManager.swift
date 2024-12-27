@@ -7,73 +7,80 @@
 
 import Foundation
 
-protocol StockDataDelegate {
-    func uploadPhotoURL (_ imageURL: String)
-    func uploadCurrentPrice ( _ currentPrice: Double)
-    func uploadPriceChange (_ priceChange: Double)
-}
-
 struct NetworkingManager {
-    
-    var delegate: StockDataDelegate?
     
     let apiKey = "ctctrrpr01qlc0uvjqq0ctctrrpr01qlc0uvjqqg"
 
-    func fetchStockLogo() {
-        let urlString = "https://finnhub.io/api/v1/stock/profile2?symbol=AAPL&token=\(apiKey)"
-        
-        performLogoRequest(with: urlString)
-    }
-        
-    func fetchStockInfo() {
-        let urlString = "https://finnhub.io/api/v1/quote?symbol=AAPL&token=\(apiKey)"
-        
-        performInfoRequest(with: urlString)
+    // Fetch stock logo
+    func fetchStockLogo(_ ticker: String, completion: @escaping (Result<(String, String), Error>) -> Void) {
+        let urlString = "https://finnhub.io/api/v1/stock/profile2?symbol=\(ticker)&token=\(apiKey)"
+        performLogoRequest(with: urlString, completion: completion)
     }
     
-    func performLogoRequest(with urlString: String) {
-        guard let url = URL(string: urlString) else { return }
+    // Fetch stock info
+    func fetchStockInfo(_ ticker: String, completion: @escaping (Result<(Double, Double), Error>) -> Void) {
+        let urlString = "https://finnhub.io/api/v1/quote?symbol=\(ticker)&token=\(apiKey)"
+        performInfoRequest(with: urlString, completion: completion)
+    }
+    
+    // Perform logo request
+    private func performLogoRequest(with urlString: String, completion: @escaping (Result<(String, String), Error>) -> Void) {
+        guard let url = URL(string: urlString) else {
+            completion(.failure(NetworkingError.invalidURL))
+            return
+        }
         
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            
-            if error != nil {
-                print(error!)
+            if let error = error {
+                completion(.failure(error))
+                return
             }
             
-            if let safeData = data {
-                do {
-                    let result = try JSONDecoder().decode(StockLogoData.self, from: safeData)
-                    let stockURL = result.logo
-                    delegate?.uploadPhotoURL(stockURL)
-                } catch {
-                    print("Failed to decode JSON: \(error)")
-                }
+            guard let safeData = data else {
+                completion(.failure(NetworkingError.noData))
+                return
+            }
+            
+            do {
+                let result = try JSONDecoder().decode(StockLogoData.self, from: safeData)
+                completion(.success((result.name, result.logo)))
+            } catch {
+                completion(.failure(error))
             }
         }
         task.resume()
     }
     
-    func performInfoRequest(with urlString: String) {
-        guard let url = URL(string: urlString) else { return }
+    // Perform info request
+    private func performInfoRequest(with urlString: String, completion: @escaping (Result<(Double, Double), Error>) -> Void) {
+        guard let url = URL(string: urlString) else {
+            completion(.failure(NetworkingError.invalidURL))
+            return
+        }
         
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            
-            if error != nil {
-                print(error!)
+            if let error = error {
+                completion(.failure(error))
+                return
             }
             
-            if let safeData = data {
-                do {
-                    let result = try JSONDecoder().decode(StockInfoData.self, from: safeData)
-                    let currentPrice = result.c
-                    let priceChange = result.d
-                    delegate?.uploadCurrentPrice(currentPrice)
-                    delegate?.uploadPriceChange(priceChange)
-                } catch {
-                    print("Failed to decode JSON: \(error)")
-                }
+            guard let safeData = data else {
+                completion(.failure(NetworkingError.noData))
+                return
+            }
+            
+            do {
+                let result = try JSONDecoder().decode(StockInfoData.self, from: safeData)
+                completion(.success((result.c, result.d))) // Current price and price change
+            } catch {
+                completion(.failure(error))
             }
         }
         task.resume()
     }
+}
+
+enum NetworkingError: Error {
+    case invalidURL
+    case noData
 }

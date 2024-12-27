@@ -14,14 +14,6 @@ final class StocksMainVC: UIViewController {
     
     //MARK: -UI elements
     
-    private lazy var searchView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .cyan
-        
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
     private lazy var searchBar: UITextField = {
         let tf = UITextField()
         tf.placeholder = "Find company or ticker"
@@ -100,6 +92,16 @@ final class StocksMainVC: UIViewController {
         return tv
     }()
     
+    private lazy var searchCollectionview: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        cv.backgroundColor = .clear
+        
+        cv.translatesAutoresizingMaskIntoConstraints = false
+        return cv
+    }()
     //MARK: -Lifecycle
     
     override func viewDidLoad() {
@@ -224,20 +226,6 @@ extension StocksMainVC: StarColorDelegate {
 
 extension StocksMainVC: UITextFieldDelegate {
     
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        self.view.addSubview(searchView)
-        self.view.bringSubviewToFront(searchView)
-        
-        let leftRightSpacing = view.frame.width * 0.05
-        
-        NSLayoutConstraint.activate([
-            searchView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 12),
-            searchView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: leftRightSpacing),
-            searchView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -leftRightSpacing),
-            searchView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-        ])
-    }
-    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         searchBar.endEditing(true)
         return true
@@ -254,19 +242,15 @@ extension StocksMainVC: UITextFieldDelegate {
 
     func textFieldDidEndEditing(_ textField: UITextField) {
         filterStocks(for: textField.text)
-        self.view.sendSubviewToBack(searchView)
-        searchView.backgroundColor = .clear
     }
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
         filterStocks(for: textField.text)
-        self.view.sendSubviewToBack(searchView)
-        searchView.backgroundColor = .clear
     }
 
     private func filterStocks(for query: String?) {
         if let searchText = query?.lowercased(), !searchText.isEmpty {
-            filteredStocks = stocksBrain.stocks.filter { $0.name.lowercased().contains(searchText) }
+            filteredStocks = stocksBrain.stocks.filter { $0.ticker.lowercased().contains(searchText) }
         } else {
             filteredStocks.removeAll()
         }

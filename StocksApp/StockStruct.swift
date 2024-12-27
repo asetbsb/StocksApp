@@ -8,6 +8,6 @@
 import Foundation
 
 struct StockStruct {
-    let name: String
+    let ticker: String
     var isFavorite: Bool
 }
