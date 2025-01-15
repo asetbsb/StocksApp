@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct StockStruct {
+struct StockDefinitionStruct {
     let ticker: String
     var isFavorite: Bool
 }
