@@ -11,13 +11,13 @@ protocol StarColorDelegate: AnyObject {
     func didTapStar (_ index: Int, _ color: UIColor)
 }
 
-final class StockCell: UITableViewCell {
+final class StockCellVC: UITableViewCell {
     
     private var networkingManager = NetworkingManager()
     
     weak var delegate: StarColorDelegate?
     var stockIndex: Int?
-    static var identifier = "TableViewCellIdentifier"
+    static var identifier = "StockCellIdentifier"
     
     private lazy var containerView: UIView = {
         let view = UIView()
@@ -121,26 +121,37 @@ final class StockCell: UITableViewCell {
         setConstraints()
     }
     
+    func set(_ stock: StockDefinitionStruct, _ index: Int) {
+        titleLabel.text = stock.ticker
+        if stock.isFavorite {
+            starButton.tintColor = .yellow
+        } else {
+            starButton.tintColor = .lightGray
+        }
+        stockIndex = index
+        
+        setupNetworking(stock.ticker)
+    }
+    
     func setupNetworking(_ ticker: String) {
-        networkingManager.fetchStockLogo(ticker) { result in
+        networkingManager.fetchData(type: .logoName(ticker), responseType: StockLogoNameData.self) { result in
             switch result {
-            case .success(let (name, logoURL)):
-                self.uploadPhotoURL(logoURL)
+            case .success(let data):
+                self.uploadPhotoURL(data.logo)
                 DispatchQueue.main.async {
-                    self.leftTitle.text = name
+                    self.leftTitle.text = data.name
                 }
             case .failure(let error):
                 print("Error fetching logo: \(error)")
             }
         }
 
-        // Fetch Stock Info
-        networkingManager.fetchStockInfo(ticker) { result in
+        networkingManager.fetchData(type: .prices(ticker), responseType: StockPricesData.self) { result in
             switch result {
-            case .success(let (currentPrice, priceChange)):
+            case .success(let data):
                 DispatchQueue.main.async {
-                    self.priceLabel.text = String(currentPrice)
-                    self.rightPriceLabel.text = String(priceChange)
+                    self.priceLabel.text = String(data.currentPrice)
+                    self.rightPriceLabel.text = String(data.priceChange)
                 }
             case .failure(let error):
                 print("Error fetching stock info: \(error)")
@@ -159,18 +170,6 @@ final class StockCell: UITableViewCell {
                 }
             }.resume()
         }
-    }
-    
-    func set(_ stock: StockStruct, _ index: Int) {
-        titleLabel.text = stock.ticker
-        if stock.isFavorite {
-            starButton.tintColor = .yellow
-        } else {
-            starButton.tintColor = .lightGray
-        }
-        stockIndex = index
-        
-        setupNetworking(stock.ticker)
     }
     
     private func addSubviews() {

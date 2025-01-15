@@ -10,7 +10,7 @@ import UIKit
 final class StocksMainVC: UIViewController {
     
     private var stocksBrain = StocksBrain()
-    private var filteredStocks = [StockStruct]()
+    private var filteredStocks = [StockDefinitionStruct]()
     
     //MARK: -UI elements
     
@@ -84,7 +84,7 @@ final class StocksMainVC: UIViewController {
     private lazy var stocksTableview: UITableView = {
         let tv = UITableView()
         tv.backgroundColor = .clear
-        tv.register(StockCell.self, forCellReuseIdentifier: StockCell.identifier)
+        tv.register(StockCellVC.self, forCellReuseIdentifier: StockCellVC.identifier)
         
         tv.separatorStyle = .none
         
@@ -186,19 +186,19 @@ final class StocksMainVC: UIViewController {
 extension StocksMainVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return filteredStocks.isEmpty
-            ? (favoritesButton.isSelected ? stocksBrain.stocks.filter { $0.isFavorite }.count : stocksBrain.stocks.count)
+            ? (favoritesButton.isSelected ? stocksBrain.tickerNames.filter { $0.isFavorite }.count : stocksBrain.tickerNames.count)
             : filteredStocks.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: StockCell.identifier) as? StockCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: StockCellVC.identifier) as? StockCellVC else {
             return UITableViewCell()
         }
 
         let stock = filteredStocks.isEmpty
             ? (favoritesButton.isSelected
-                ? stocksBrain.stocks.filter { $0.isFavorite }[indexPath.row]
-                : stocksBrain.stocks[indexPath.row])
+                ? stocksBrain.tickerNames.filter { $0.isFavorite }[indexPath.row]
+                : stocksBrain.tickerNames[indexPath.row])
             : filteredStocks[indexPath.row]
 
         cell.set(stock, indexPath.row)
@@ -214,9 +214,9 @@ extension StocksMainVC: UITableViewDelegate, UITableViewDataSource {
 extension StocksMainVC: StarColorDelegate {
     func didTapStar(_ index: Int, _ color: UIColor) {
         if color == .yellow {
-            stocksBrain.stocks[index].isFavorite = true
+            stocksBrain.tickerNames[index].isFavorite = true
         } else {
-            stocksBrain.stocks[index].isFavorite = false
+            stocksBrain.tickerNames[index].isFavorite = false
         }
         
         stocksTableview.reloadData()
@@ -250,7 +250,7 @@ extension StocksMainVC: UITextFieldDelegate {
 
     private func filterStocks(for query: String?) {
         if let searchText = query?.lowercased(), !searchText.isEmpty {
-            filteredStocks = stocksBrain.stocks.filter { $0.ticker.lowercased().contains(searchText) }
+            filteredStocks = stocksBrain.tickerNames.filter { $0.ticker.lowercased().contains(searchText) }
         } else {
             filteredStocks.removeAll()
         }
