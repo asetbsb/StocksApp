@@ -29,7 +29,7 @@ final class StockDetailsCell: UITableViewCell {
     private lazy var stockImage: UIImageView = {
         let image = UIImageView()
         image.clipsToBounds = true
-        image.layer.cornerRadius = 12
+        image.layer.cornerRadius = 16
         
         image.translatesAutoresizingMaskIntoConstraints = false
         return image
@@ -46,8 +46,9 @@ final class StockDetailsCell: UITableViewCell {
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "YNDX"
-        label.font = .systemFont(ofSize: 26, weight: .bold)
+        label.textColor = UIColor(rgb: 0x1A1A1A)
+        label.font = UIFont(name: "Montserrat-VariableFont_wght", size: 22)
+        label.font = .systemFont(ofSize: 24, weight: .bold)
         
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -65,7 +66,9 @@ final class StockDetailsCell: UITableViewCell {
     
     private lazy var priceLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 26, weight: .bold)
+        label.font = UIFont(name: "Montserrat-VariableFont_wght", size: 22)
+        label.textColor = UIColor(rgb: 0x1A1A1A)
+        label.font = .systemFont(ofSize: 24, weight: .bold)
         
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -82,8 +85,9 @@ final class StockDetailsCell: UITableViewCell {
     
     private lazy var leftTitle: UILabel = {
         let label = UILabel()
-        label.text = "Yandex, LLC"
-        label.font = .systemFont(ofSize: 20)
+        label.font = UIFont(name: "Montserrat-VariableFont_wght", size: 16)
+        label.textColor = UIColor(rgb: 0x000000)
+        label.font = .systemFont(ofSize: 16, weight: .medium)
         
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -91,9 +95,10 @@ final class StockDetailsCell: UITableViewCell {
     
     private lazy var rightPriceLabel: UILabel = {
         let label = UILabel()
-
-        label.font = .systemFont(ofSize: 20)
-        label.textColor = .green
+        
+        label.font = UIFont(name: "Montserrat-VariableFont_wght", size: 16)
+        label.textColor = UIColor(rgb: 0x24B25D)
+        label.font = .systemFont(ofSize: 16, weight: .bold)
         
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -150,8 +155,8 @@ final class StockDetailsCell: UITableViewCell {
             switch result {
             case .success(let data):
                 DispatchQueue.main.async {
-                    self.priceLabel.text = String(data.currentPrice)
-                    self.rightPriceLabel.text = String(data.priceChange)
+                    self.priceLabel.text = "$" + String(data.currentPrice)
+                    self.rightPriceLabel.text = "+$" + String(data.priceChange)
                 }
             case .failure(let error):
                 print("Error fetching stock info: \(error)")
@@ -195,19 +200,19 @@ final class StockDetailsCell: UITableViewCell {
             containerView.centerXAnchor.constraint(equalTo: centerXAnchor),
             containerView.centerYAnchor.constraint(equalTo: centerYAnchor),
             
-            stockImage.heightAnchor.constraint(equalTo: containerView.heightAnchor, multiplier: 0.8),
+            stockImage.heightAnchor.constraint(equalTo: containerView.heightAnchor, multiplier: 0.85),
             stockImage.widthAnchor.constraint(equalTo: stockImage.heightAnchor),
             stockImage.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 8),
             stockImage.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
             
             topView.leadingAnchor.constraint(equalTo: stockImage.trailingAnchor, constant: 10),
-            topView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: frame.height * 0.1),
-            topView.heightAnchor.constraint(equalTo: containerView.heightAnchor, multiplier: 0.4),
+            topView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: frame.height * 0.25),
+            topView.heightAnchor.constraint(equalTo: containerView.heightAnchor, multiplier: 0.25),
             topView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -10),
             
             bottomView.leadingAnchor.constraint(equalTo: stockImage.trailingAnchor, constant: 10),
             bottomView.topAnchor.constraint(equalTo: topView.bottomAnchor, constant: 4),
-            bottomView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -frame.height * 0.1),
+            bottomView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -frame.height * 0.25),
             bottomView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -10),
             
             //inside topview

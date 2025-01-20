@@ -23,7 +23,7 @@ final class StocksMainVC: UIViewController {
     private lazy var searchBar: UITextField = {
         let tf = UITextField()
         tf.placeholder = "Find company or ticker"
-        tf.layer.cornerRadius = 24
+        tf.layer.cornerRadius = view.frame.height * 0.035
         tf.layer.borderWidth = 2
         tf.layer.borderColor = UIColor.black.cgColor
         tf.textAlignment = .center
@@ -60,10 +60,13 @@ final class StocksMainVC: UIViewController {
     private lazy var stocksButton: UIButton = {
         let button = UIButton()
         button.setTitle("Stocks", for: .normal)
+        
+        button.titleLabel?.font = UIFont(name: "Montserrat-VariableFont_wght", size: 32)
+        button.titleLabel?.font = .systemFont(ofSize: 32, weight: .bold)
+        button.titleLabel?.textColor = UIColor(rgb: 0x1A1A1A)
+        
         button.isSelected = true
         button.addTarget(self, action: #selector(titlePressed(_:)), for: .touchUpInside)
-        
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 32, weight: .bold)
         
         button.setTitleColor(.black, for: .selected)
         button.setTitleColor(.lightGray, for: .normal)
@@ -75,10 +78,13 @@ final class StocksMainVC: UIViewController {
     private lazy var favoritesButton: UIButton = {
         let button = UIButton()
         button.setTitle("Favorites", for: .normal)
+        
+        button.titleLabel?.font = UIFont(name: "Montserrat-VariableFont_wght", size: 26)
+        button.titleLabel?.font = .systemFont(ofSize: 26, weight: .thin)
+        button.titleLabel?.textColor = UIColor(rgb: 0x1A1A1A)
+        
         button.isSelected = false
         button.addTarget(self, action: #selector(titlePressed(_:)), for: .touchUpInside)
-        
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 26, weight: .thin)
         
         button.setTitleColor(.black, for: .selected)
         button.setTitleColor(.lightGray, for: .normal)
@@ -91,6 +97,7 @@ final class StocksMainVC: UIViewController {
         let tv = UITableView()
         tv.backgroundColor = .clear
         tv.register(StockDetailsCell.self, forCellReuseIdentifier: StockDetailsCell.identifier)
+        tv.showsVerticalScrollIndicator = false
         
         tv.separatorStyle = .none
         
@@ -142,6 +149,7 @@ final class StocksMainVC: UIViewController {
     
     private func setupConstraints() {
         let leftRightSpacing = view.frame.width * 0.05
+        let titlesSpacing = view.frame.width * 0.07
         
         NSLayoutConstraint.activate([
             searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -149,12 +157,12 @@ final class StocksMainVC: UIViewController {
             searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -leftRightSpacing),
             searchBar.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.07),
             
-            buttonsView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 12),
-            buttonsView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: leftRightSpacing),
-            buttonsView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -leftRightSpacing),
+            buttonsView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 6),
+            buttonsView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: titlesSpacing),
+            buttonsView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -titlesSpacing),
             buttonsView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.1),
             
-            stocksTableview.topAnchor.constraint(equalTo: buttonsView.bottomAnchor, constant: 12),
+            stocksTableview.topAnchor.constraint(equalTo: buttonsView.bottomAnchor, constant: 6),
             stocksTableview.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: leftRightSpacing),
             stocksTableview.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -leftRightSpacing),
             stocksTableview.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
@@ -209,7 +217,7 @@ extension StocksMainVC: UITableViewDelegate, UITableViewDataSource {
 
 extension StocksMainVC: StarColorDelegate {
     func didTapStar(_ index: IndexPath) {
-        var stock = displayedStocksList[index.row]
+        let stock = displayedStocksList[index.row]
         
         if let originalIndex = stocksList.tickerNames.firstIndex(where: { $0.ticker == stock.ticker }) {
             let stockToUpdate = stocksList.tickerNames[originalIndex]

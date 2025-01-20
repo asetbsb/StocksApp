@@ -12,6 +12,8 @@
 		0F24A2512D3B9A3000B59677 /* FetchType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F24A2502D3B9A3000B59677 /* FetchType.swift */; };
 		0F24A2532D3B9A5700B59677 /* NetworkingError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F24A2522D3B9A5700B59677 /* NetworkingError.swift */; };
 		0F24A2552D3E915500B59677 /* StockFavoriteState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F24A2542D3E915500B59677 /* StockFavoriteState.swift */; };
+		0F24A2572D3EAF9100B59677 /* Montserrat-VariableFont_wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0F24A2562D3EAF9100B59677 /* Montserrat-VariableFont_wght.ttf */; };
+		0F24A2592D3EB3FA00B59677 /* UIColor+rgb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F24A2582D3EB3FA00B59677 /* UIColor+rgb.swift */; };
 		0FF03EC02CF5CEF400519D49 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF03EBF2CF5CEF400519D49 /* AppDelegate.swift */; };
 		0FF03EC22CF5CEF400519D49 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF03EC12CF5CEF400519D49 /* SceneDelegate.swift */; };
 		0FF03EC42CF5CEF400519D49 /* StocksMainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF03EC32CF5CEF400519D49 /* StocksMainVC.swift */; };
@@ -28,6 +30,8 @@
 		0F24A2502D3B9A3000B59677 /* FetchType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchType.swift; sourceTree = "<group>"; };
 		0F24A2522D3B9A5700B59677 /* NetworkingError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkingError.swift; sourceTree = "<group>"; };
 		0F24A2542D3E915500B59677 /* StockFavoriteState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockFavoriteState.swift; sourceTree = "<group>"; };
+		0F24A2562D3EAF9100B59677 /* Montserrat-VariableFont_wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Montserrat-VariableFont_wght.ttf"; path = "../../../Downloads/Montserrat/Montserrat-VariableFont_wght.ttf"; sourceTree = "<group>"; };
+		0F24A2582D3EB3FA00B59677 /* UIColor+rgb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+rgb.swift"; sourceTree = "<group>"; };
 		0FF03EBC2CF5CEF400519D49 /* StocksApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StocksApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FF03EBF2CF5CEF400519D49 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0FF03EC12CF5CEF400519D49 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -54,6 +58,7 @@
 		0FF03EB32CF5CEF400519D49 = {
 			isa = PBXGroup;
 			children = (
+				0F24A2562D3EAF9100B59677 /* Montserrat-VariableFont_wght.ttf */,
 				0FF03EBE2CF5CEF400519D49 /* StocksApp */,
 				0FF03EBD2CF5CEF400519D49 /* Products */,
 			);
@@ -81,6 +86,7 @@
 				0F24A2502D3B9A3000B59677 /* FetchType.swift */,
 				0F24A2522D3B9A5700B59677 /* NetworkingError.swift */,
 				0F24A2542D3E915500B59677 /* StockFavoriteState.swift */,
+				0F24A2582D3EB3FA00B59677 /* UIColor+rgb.swift */,
 			);
 			path = StocksApp;
 			sourceTree = "<group>";
@@ -155,6 +161,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0FF03ECC2CF5CEF600519D49 /* LaunchScreen.storyboard in Resources */,
+				0F24A2572D3EAF9100B59677 /* Montserrat-VariableFont_wght.ttf in Resources */,
 				0FF03EC92CF5CEF600519D49 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -169,6 +176,7 @@
 				0F24A2512D3B9A3000B59677 /* FetchType.swift in Sources */,
 				0FF03EC42CF5CEF400519D49 /* StocksMainVC.swift in Sources */,
 				0FF03EDB2CF6103500519D49 /* StockDetails.swift in Sources */,
+				0F24A2592D3EB3FA00B59677 /* UIColor+rgb.swift in Sources */,
 				0FF03EC02CF5CEF400519D49 /* AppDelegate.swift in Sources */,
 				0F24A2532D3B9A5700B59677 /* NetworkingError.swift in Sources */,
 				0F24A2552D3E915500B59677 /* StockFavoriteState.swift in Sources */,
