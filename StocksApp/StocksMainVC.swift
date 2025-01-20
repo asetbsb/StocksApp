@@ -9,8 +9,14 @@ import UIKit
 
 final class StocksMainVC: UIViewController {
     
-    private var stocksBrain = StocksBrain()
-    private var filteredStocks = [StockDefinitionStruct]()
+    private var stocksList = StocksList()
+    
+    private var showingFavorites = false
+    private var displayedStocksList: [StockDetails] {
+        return showingFavorites
+            ? stocksList.tickerNames.filter { $0.isFavorite == .favorite }
+            : stocksList.tickerNames
+    }
     
     //MARK: -UI elements
     
@@ -84,7 +90,7 @@ final class StocksMainVC: UIViewController {
     private lazy var stocksTableview: UITableView = {
         let tv = UITableView()
         tv.backgroundColor = .clear
-        tv.register(StockCellVC.self, forCellReuseIdentifier: StockCellVC.identifier)
+        tv.register(StockDetailsCell.self, forCellReuseIdentifier: StockDetailsCell.identifier)
         
         tv.separatorStyle = .none
         
@@ -167,17 +173,13 @@ final class StocksMainVC: UIViewController {
     
     @objc
     private func titlePressed(_ sender: UIButton) {
-        if sender == stocksButton {
-            stocksButton.titleLabel?.font = UIFont.systemFont(ofSize: 32, weight: .bold)
-            favoritesButton.titleLabel?.font = UIFont.systemFont(ofSize: 26, weight: .thin)
-            stocksButton.isSelected = true
-            favoritesButton.isSelected = false
-        } else {
-            favoritesButton.titleLabel?.font = UIFont.systemFont(ofSize: 32, weight: .bold)
-            stocksButton.titleLabel?.font = UIFont.systemFont(ofSize: 26, weight: .thin)
-            favoritesButton.isSelected = true
-            stocksButton.isSelected = false
-        }
+        showingFavorites = (sender == favoritesButton)
+        
+        stocksButton.titleLabel?.font = showingFavorites ? UIFont.systemFont(ofSize: 26, weight: .thin) : UIFont.systemFont(ofSize: 32, weight: .bold)
+        favoritesButton.titleLabel?.font = showingFavorites ? UIFont.systemFont(ofSize: 32, weight: .bold) : UIFont.systemFont(ofSize: 26, weight: .thin)
+        
+        stocksButton.isSelected = !showingFavorites
+        favoritesButton.isSelected = showingFavorites
         
         stocksTableview.reloadData()
     }
@@ -185,23 +187,17 @@ final class StocksMainVC: UIViewController {
 
 extension StocksMainVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return filteredStocks.isEmpty
-            ? (favoritesButton.isSelected ? stocksBrain.tickerNames.filter { $0.isFavorite }.count : stocksBrain.tickerNames.count)
-            : filteredStocks.count
+        return displayedStocksList.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: StockCellVC.identifier) as? StockCellVC else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: StockDetailsCell.identifier) as? StockDetailsCell else {
             return UITableViewCell()
         }
 
-        let stock = filteredStocks.isEmpty
-            ? (favoritesButton.isSelected
-                ? stocksBrain.tickerNames.filter { $0.isFavorite }[indexPath.row]
-                : stocksBrain.tickerNames[indexPath.row])
-            : filteredStocks[indexPath.row]
+        let stock = displayedStocksList[indexPath.row]
 
-        cell.set(stock, indexPath.row)
+        cell.set(stock, indexPath)
         cell.delegate = self
         return cell
     }
@@ -212,48 +208,22 @@ extension StocksMainVC: UITableViewDelegate, UITableViewDataSource {
 }
 
 extension StocksMainVC: StarColorDelegate {
-    func didTapStar(_ index: Int, _ color: UIColor) {
-        if color == .yellow {
-            stocksBrain.tickerNames[index].isFavorite = true
-        } else {
-            stocksBrain.tickerNames[index].isFavorite = false
+    func didTapStar(_ index: IndexPath) {
+        var stock = displayedStocksList[index.row]
+        
+        if let originalIndex = stocksList.tickerNames.firstIndex(where: { $0.ticker == stock.ticker }) {
+            let stockToUpdate = stocksList.tickerNames[originalIndex]
+            stocksList.tickerNames[originalIndex].isFavorite = stockToUpdate.isFavorite == .favorite ? .notFavorite : .favorite
         }
         
-        stocksTableview.reloadData()
+        if showingFavorites {
+            stocksTableview.reloadData()
+        } else {
+            stocksTableview.reloadRows(at: [index], with: .automatic)
+        }
     }
-    
 }
 
 extension StocksMainVC: UITextFieldDelegate {
     
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        searchBar.endEditing(true)
-        return true
-    }
-
-    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-        if textField.text != "" {
-            return true
-        } else {
-            textField.placeholder = "Type something"
-            return false
-        }
-    }
-
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        filterStocks(for: textField.text)
-    }
-    
-    func textFieldDidChangeSelection(_ textField: UITextField) {
-        filterStocks(for: textField.text)
-    }
-
-    private func filterStocks(for query: String?) {
-        if let searchText = query?.lowercased(), !searchText.isEmpty {
-            filteredStocks = stocksBrain.tickerNames.filter { $0.ticker.lowercased().contains(searchText) }
-        } else {
-            filteredStocks.removeAll()
-        }
-        stocksTableview.reloadData()
-    }
 }

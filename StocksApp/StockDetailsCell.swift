@@ -8,16 +8,16 @@
 import UIKit
 
 protocol StarColorDelegate: AnyObject {
-    func didTapStar (_ index: Int, _ color: UIColor)
+    func didTapStar (_ index: IndexPath)
 }
 
-final class StockCellVC: UITableViewCell {
+final class StockDetailsCell: UITableViewCell {
     
     private var networkingManager = NetworkingManager()
     
     weak var delegate: StarColorDelegate?
-    var stockIndex: Int?
-    static var identifier = "StockCellIdentifier"
+    var stockIndexPath: IndexPath?
+    static var identifier = "StockDetailsTableViewСellIdentifier"
     
     private lazy var containerView: UIView = {
         let view = UIView()
@@ -56,8 +56,8 @@ final class StockCellVC: UITableViewCell {
     private lazy var starButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "star.fill"), for: .normal)
-        button.addTarget(self, action: #selector(starPressed(_:)), for: .touchUpInside)
-        button.tintColor = .yellow
+        button.addTarget(self, action: #selector(starPressed), for: .touchUpInside)
+        button.tintColor = .lightGray
         
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -107,6 +107,10 @@ final class StockCellVC: UITableViewCell {
         setupUI()
     }
     
+    override func prepareForReuse() {
+        stockImage.image = nil
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -118,18 +122,14 @@ final class StockCellVC: UITableViewCell {
         self.layer.cornerRadius = 20
         
         addSubviews()
+        
         setConstraints()
     }
     
-    func set(_ stock: StockDefinitionStruct, _ index: Int) {
+    func set(_ stock: StockDetails, _ indexPath: IndexPath) {
         titleLabel.text = stock.ticker
-        if stock.isFavorite {
-            starButton.tintColor = .yellow
-        } else {
-            starButton.tintColor = .lightGray
-        }
-        stockIndex = index
-        
+        stockIndexPath = indexPath
+        starButton.tintColor = stock.isFavorite.color
         setupNetworking(stock.ticker)
     }
     
@@ -146,7 +146,7 @@ final class StockCellVC: UITableViewCell {
             }
         }
 
-        networkingManager.fetchData(type: .prices(ticker), responseType: StockPricesData.self) { result in
+        networkingManager.fetchData(type: .prices(ticker), responseType: StockPriceData.self) { result in
             switch result {
             case .success(let data):
                 DispatchQueue.main.async {
@@ -234,14 +234,9 @@ final class StockCellVC: UITableViewCell {
     //MARK: -Action functions
     
     @objc
-    private func starPressed(_ sender: UIButton) {
-        if sender.tintColor == .lightGray {
-            sender.tintColor = .yellow
-            delegate?.didTapStar(stockIndex ?? 0, .yellow)
-        } else {
-            sender.tintColor = .lightGray
-            delegate?.didTapStar(stockIndex ?? 0, .lightGray)
-        }
+    private func starPressed() {
+        guard let indexPath = stockIndexPath else {return}
+        delegate?.didTapStar(indexPath)
     }
 }
 

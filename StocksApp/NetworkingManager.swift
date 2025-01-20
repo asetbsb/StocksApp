@@ -6,25 +6,6 @@
 
 import Foundation
 
-enum FetchType {
-    case logoName(_ ticker: String)
-    case prices(_ ticker: String)
-    
-    var urlString: String {
-        switch self {
-        case .logoName(let ticker):
-            return "https://finnhub.io/api/v1/stock/profile2?symbol=\(ticker)&token="
-        case .prices(let ticker):
-            return "https://finnhub.io/api/v1/quote?symbol=\(ticker)&token="
-        }
-    }
-}
-
-enum NetworkingError: Error {
-    case invalidURL
-    case noData
-}
-
 struct NetworkingManager {
     
     let apiKey = "ctctrrpr01qlc0uvjqq0ctctrrpr01qlc0uvjqqg"
@@ -33,15 +14,16 @@ struct NetworkingManager {
     {
         switch type {
         case .logoName(let ticker):
-            requestData(type: .logoName(ticker), responseType: responseType, completion: completion)
+            let urlString = type.urlString + "\(apiKey)"
+            requestData(urlString: urlString, responseType: responseType, completion: completion)
 
         case .prices(let ticker):
-            requestData(type: .prices(ticker), responseType: responseType, completion: completion)
+            let urlString = type.urlString + "\(apiKey)"
+            requestData(urlString: urlString, responseType: responseType, completion: completion)
         }
     }
     
-    func requestData<T: Codable>(type: FetchType, responseType: T.Type, completion: @escaping (Result<T, Error>) -> Void) {
-        let urlString = type.urlString + "\(apiKey)"
+    func requestData<T: Codable>(urlString: String, responseType: T.Type, completion: @escaping (Result<T, Error>) -> Void) {
         
         guard let url = URL(string: urlString) else {
             completion(.failure(NetworkingError.invalidURL))

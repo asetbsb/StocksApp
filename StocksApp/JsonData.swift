@@ -12,7 +12,7 @@ struct StockLogoNameData: Codable {
     let name: String
 }
 
-struct StockPricesData: Codable {
+struct StockPriceData: Codable {
     let currentPrice: Double
     let priceChange: Double
     
