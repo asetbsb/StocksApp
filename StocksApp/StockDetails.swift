@@ -9,5 +9,5 @@ import Foundation
 
 struct StockDetails {
     let ticker: String
-    var isFavorite: StockFavoriteState
+    var isFavorite: FavoriteState
 }

@@ -8,16 +8,16 @@
 import Foundation
 import UIKit
 
-enum StockFavoriteState {
+enum FavoriteState {
     case favorite
     case notFavorite
     
     var color: UIColor {
         switch self {
         case .favorite:
-            return .yellow
+            return AppColors.favoriteColor.color
         case .notFavorite:
-            return .lightGray
+            return AppColors.notFavoriteColor.color
         }
     }
 }

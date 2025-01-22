@@ -21,7 +21,9 @@
 	</dict>
 	<key>UIAppFonts</key>
 	<array>
-		<string>Montserrat-VariableFont_wght.ttf</string>
+		<string>Montserrat-Regular.ttf</string>
+		<string>Montserrat-SemiBold.ttf</string>
+		<string>Montserrat-Bold.ttf</string>
 	</array>
 </dict>
 </plist>

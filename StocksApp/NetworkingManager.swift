@@ -13,17 +13,17 @@ struct NetworkingManager {
     func fetchData<T>(type: FetchType, responseType: T.Type, completion: @escaping (Result<T, Error>) -> Void) where T: Codable 
     {
         switch type {
-        case .logoName(let ticker):
+        case .logoAndName:
             let urlString = type.urlString + "\(apiKey)"
-            requestData(urlString: urlString, responseType: responseType, completion: completion)
+            request(urlString: urlString, responseType: responseType, completion: completion)
 
-        case .prices(let ticker):
+        case .priceInfo:
             let urlString = type.urlString + "\(apiKey)"
-            requestData(urlString: urlString, responseType: responseType, completion: completion)
+            request(urlString: urlString, responseType: responseType, completion: completion)
         }
     }
     
-    func requestData<T: Codable>(urlString: String, responseType: T.Type, completion: @escaping (Result<T, Error>) -> Void) {
+    func request<T: Codable>(urlString: String, responseType: T.Type, completion: @escaping (Result<T, Error>) -> Void) {
         
         guard let url = URL(string: urlString) else {
             completion(.failure(NetworkingError.invalidURL))

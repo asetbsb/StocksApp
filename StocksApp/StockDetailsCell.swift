@@ -29,7 +29,7 @@ final class StockDetailsCell: UITableViewCell {
     private lazy var stockImage: UIImageView = {
         let image = UIImageView()
         image.clipsToBounds = true
-        image.layer.cornerRadius = 16
+        image.layer.cornerRadius = 14
         
         image.translatesAutoresizingMaskIntoConstraints = false
         return image
@@ -46,9 +46,8 @@ final class StockDetailsCell: UITableViewCell {
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor(rgb: 0x1A1A1A)
-        label.font = UIFont(name: "Montserrat-VariableFont_wght", size: 22)
-        label.font = .systemFont(ofSize: 24, weight: .bold)
+        label.font = UIFont(name: CustomFonts.bold.fontFamily, size: 20)
+        label.numberOfLines = 1
         
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -56,9 +55,10 @@ final class StockDetailsCell: UITableViewCell {
     
     private lazy var starButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "star.fill"), for: .normal)
+        let image = UIImage(named: "Star")?.withRenderingMode(.alwaysTemplate)
+        
+        button.setImage(image, for: .normal)
         button.addTarget(self, action: #selector(starPressed), for: .touchUpInside)
-        button.tintColor = .lightGray
         
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -66,9 +66,8 @@ final class StockDetailsCell: UITableViewCell {
     
     private lazy var priceLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont(name: "Montserrat-VariableFont_wght", size: 22)
-        label.textColor = UIColor(rgb: 0x1A1A1A)
-        label.font = .systemFont(ofSize: 24, weight: .bold)
+        label.font = UIFont(name: CustomFonts.bold.fontFamily, size: 20)
+        label.numberOfLines = 1
         
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -85,9 +84,9 @@ final class StockDetailsCell: UITableViewCell {
     
     private lazy var leftTitle: UILabel = {
         let label = UILabel()
-        label.font = UIFont(name: "Montserrat-VariableFont_wght", size: 16)
-        label.textColor = UIColor(rgb: 0x000000)
-        label.font = .systemFont(ofSize: 16, weight: .medium)
+        label.font = UIFont(name: CustomFonts.semiBold.fontFamily, size: 14)
+        label.numberOfLines = 1
+        label.adjustsFontSizeToFitWidth = true
         
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -96,9 +95,9 @@ final class StockDetailsCell: UITableViewCell {
     private lazy var rightPriceLabel: UILabel = {
         let label = UILabel()
         
-        label.font = UIFont(name: "Montserrat-VariableFont_wght", size: 16)
-        label.textColor = UIColor(rgb: 0x24B25D)
-        label.font = .systemFont(ofSize: 16, weight: .bold)
+        label.font = UIFont(name: CustomFonts.regular.fontFamily, size: 14)
+        label.numberOfLines = 1
+        label.adjustsFontSizeToFitWidth = true
         
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -123,9 +122,6 @@ final class StockDetailsCell: UITableViewCell {
     //MARK: -Helper functions
     
     private func setupUI() {
-        self.clipsToBounds = true
-        self.layer.cornerRadius = 20
-        
         addSubviews()
         
         setConstraints()
@@ -134,12 +130,12 @@ final class StockDetailsCell: UITableViewCell {
     func set(_ stock: StockDetails, _ indexPath: IndexPath) {
         titleLabel.text = stock.ticker
         stockIndexPath = indexPath
-        starButton.tintColor = stock.isFavorite.color
+        starButton.imageView?.tintColor = stock.isFavorite.color
         setupNetworking(stock.ticker)
     }
     
     func setupNetworking(_ ticker: String) {
-        networkingManager.fetchData(type: .logoName(ticker), responseType: StockLogoNameData.self) { result in
+        networkingManager.fetchData(type: .logoAndName(ticker), responseType: StockLogoNameData.self) { result in
             switch result {
             case .success(let data):
                 self.uploadPhotoURL(data.logo)
@@ -151,12 +147,18 @@ final class StockDetailsCell: UITableViewCell {
             }
         }
 
-        networkingManager.fetchData(type: .prices(ticker), responseType: StockPriceData.self) { result in
+        networkingManager.fetchData(type: .priceInfo(ticker), responseType: StockPriceData.self) { result in
             switch result {
             case .success(let data):
+                let changePercentage = data.priceChange/data.currentPrice * 100
                 DispatchQueue.main.async {
-                    self.priceLabel.text = "$" + String(data.currentPrice)
-                    self.rightPriceLabel.text = "+$" + String(data.priceChange)
+                    self.priceLabel.text = "$" + String(format: "%.2f" ,data.currentPrice)
+                    
+                    self.rightPriceLabel.text = data.priceChange >= 0 ?
+                    "+" + String(format: "%.2f",data.priceChange) + "$ (" + String(format: "%.2f", changePercentage) + "%)" :
+                    String(format: "%.2f",data.priceChange) + "$ (" + String(format: "%.2f", changePercentage) + "%)"
+                    
+                    self.rightPriceLabel.textColor = data.priceChange >= 0 ? AppColors.greenPriceColor.color : AppColors.redPriceColor.color
                 }
             case .failure(let error):
                 print("Error fetching stock info: \(error)")
@@ -178,6 +180,11 @@ final class StockDetailsCell: UITableViewCell {
     }
     
     private func addSubviews() {
+        
+        self.layer.cornerRadius = 20
+        self.layer.masksToBounds = true
+        self.clipsToBounds = true
+        
         addSubview(containerView)
         
         containerView.addSubview(stockImage)
@@ -195,24 +202,25 @@ final class StockDetailsCell: UITableViewCell {
     
     private func setConstraints() {
         NSLayoutConstraint.activate([
-            containerView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.9),
-            containerView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 1.0),
-            containerView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            containerView.heightAnchor.constraint(equalTo: self.heightAnchor),
+            containerView.widthAnchor.constraint(equalTo: self.widthAnchor),
             containerView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            containerView.centerXAnchor.constraint(equalTo: centerXAnchor),
+
             
-            stockImage.heightAnchor.constraint(equalTo: containerView.heightAnchor, multiplier: 0.85),
+            stockImage.heightAnchor.constraint(equalTo: containerView.heightAnchor, multiplier: 0.78),
             stockImage.widthAnchor.constraint(equalTo: stockImage.heightAnchor),
             stockImage.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 8),
             stockImage.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
             
             topView.leadingAnchor.constraint(equalTo: stockImage.trailingAnchor, constant: 10),
-            topView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: frame.height * 0.25),
-            topView.heightAnchor.constraint(equalTo: containerView.heightAnchor, multiplier: 0.25),
+            topView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 20),
+            topView.heightAnchor.constraint(equalTo: containerView.heightAnchor, multiplier: 0.3),
             topView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -10),
             
             bottomView.leadingAnchor.constraint(equalTo: stockImage.trailingAnchor, constant: 10),
-            bottomView.topAnchor.constraint(equalTo: topView.bottomAnchor, constant: 4),
-            bottomView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -frame.height * 0.25),
+            bottomView.topAnchor.constraint(equalTo: topView.bottomAnchor, constant: 2),
+            bottomView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -(frame.height * 0.25)),
             bottomView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -10),
             
             //inside topview

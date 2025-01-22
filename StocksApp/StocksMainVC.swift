@@ -18,16 +18,27 @@ final class StocksMainVC: UIViewController {
             : stocksList.tickerNames
     }
     
+    private var searchBarHeightConstraint: NSLayoutConstraint?
+    private var searchBarHeight: CGFloat = 100
+    private var isAnimationInProgress = false
+    
     //MARK: -UI elements
     
     private lazy var searchBar: UITextField = {
         let tf = UITextField()
-        tf.placeholder = "Find company or ticker"
         tf.layer.cornerRadius = view.frame.height * 0.035
         tf.layer.borderWidth = 2
         tf.layer.borderColor = UIColor.black.cgColor
         tf.textAlignment = .center
         tf.tintColor = .black
+        
+        tf.attributedPlaceholder = NSAttributedString(
+            string: "Find company or ticker",
+            attributes: [
+                .font: UIFont(name: CustomFonts.semiBold.fontFamily, size: 18) ?? UIFont.systemFont(ofSize: 14),
+                .foregroundColor: UIColor.black
+            ]
+        )
 
         let imageView = UIImageView(image: UIImage(systemName: "magnifyingglass"))
         imageView.contentMode = .scaleAspectFit
@@ -46,8 +57,6 @@ final class StocksMainVC: UIViewController {
         tf.translatesAutoresizingMaskIntoConstraints = false
         return tf
     }()
-
-
     
     private lazy var buttonsView: UIView = {
         let view = UIView()
@@ -61,9 +70,7 @@ final class StocksMainVC: UIViewController {
         let button = UIButton()
         button.setTitle("Stocks", for: .normal)
         
-        button.titleLabel?.font = UIFont(name: "Montserrat-VariableFont_wght", size: 32)
-        button.titleLabel?.font = .systemFont(ofSize: 32, weight: .bold)
-        button.titleLabel?.textColor = UIColor(rgb: 0x1A1A1A)
+        button.titleLabel?.font = UIFont(name: CustomFonts.bold.fontFamily, size: 28)
         
         button.isSelected = true
         button.addTarget(self, action: #selector(titlePressed(_:)), for: .touchUpInside)
@@ -79,9 +86,7 @@ final class StocksMainVC: UIViewController {
         let button = UIButton()
         button.setTitle("Favorites", for: .normal)
         
-        button.titleLabel?.font = UIFont(name: "Montserrat-VariableFont_wght", size: 26)
-        button.titleLabel?.font = .systemFont(ofSize: 26, weight: .thin)
-        button.titleLabel?.textColor = UIColor(rgb: 0x1A1A1A)
+        button.titleLabel?.font = UIFont(name: CustomFonts.regular.fontFamily, size: 20)
         
         button.isSelected = false
         button.addTarget(self, action: #selector(titlePressed(_:)), for: .touchUpInside)
@@ -98,6 +103,7 @@ final class StocksMainVC: UIViewController {
         tv.backgroundColor = .clear
         tv.register(StockDetailsCell.self, forCellReuseIdentifier: StockDetailsCell.identifier)
         tv.showsVerticalScrollIndicator = false
+        tv.sectionHeaderTopPadding = 10
         
         tv.separatorStyle = .none
         
@@ -151,29 +157,33 @@ final class StocksMainVC: UIViewController {
         let leftRightSpacing = view.frame.width * 0.05
         let titlesSpacing = view.frame.width * 0.07
         
+        searchBarHeight = view.frame.height * 0.07
+        searchBarHeightConstraint = searchBar.heightAnchor.constraint(equalToConstant: searchBarHeight)
+        
         NSLayoutConstraint.activate([
             searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: leftRightSpacing),
             searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -leftRightSpacing),
-            searchBar.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.07),
+            searchBarHeightConstraint!,
             
-            buttonsView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 6),
+            buttonsView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 16),
             buttonsView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: titlesSpacing),
             buttonsView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -titlesSpacing),
-            buttonsView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.1),
             
-            stocksTableview.topAnchor.constraint(equalTo: buttonsView.bottomAnchor, constant: 6),
+            stocksTableview.topAnchor.constraint(equalTo: buttonsView.bottomAnchor, constant: 16),
             stocksTableview.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: leftRightSpacing),
             stocksTableview.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -leftRightSpacing),
-            stocksTableview.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            stocksTableview.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             //Inside buttonView
             
             stocksButton.leadingAnchor.constraint(equalTo: buttonsView.leadingAnchor),
             stocksButton.centerYAnchor.constraint(equalTo: buttonsView.centerYAnchor),
+            stocksButton.bottomAnchor.constraint(equalTo: buttonsView.bottomAnchor),
             
             favoritesButton.leadingAnchor.constraint(equalTo: stocksButton.trailingAnchor, constant: 20),
             favoritesButton.centerYAnchor.constraint(equalTo: buttonsView.centerYAnchor),
+            favoritesButton.bottomAnchor.constraint(equalTo: buttonsView.bottomAnchor)
         ])
     }
     
@@ -183,8 +193,8 @@ final class StocksMainVC: UIViewController {
     private func titlePressed(_ sender: UIButton) {
         showingFavorites = (sender == favoritesButton)
         
-        stocksButton.titleLabel?.font = showingFavorites ? UIFont.systemFont(ofSize: 26, weight: .thin) : UIFont.systemFont(ofSize: 32, weight: .bold)
-        favoritesButton.titleLabel?.font = showingFavorites ? UIFont.systemFont(ofSize: 32, weight: .bold) : UIFont.systemFont(ofSize: 26, weight: .thin)
+        stocksButton.titleLabel?.font = showingFavorites ? UIFont(name: CustomFonts.regular.fontFamily, size: 20) : UIFont(name: CustomFonts.bold.fontFamily, size: 28)
+        favoritesButton.titleLabel?.font = showingFavorites ? UIFont(name: CustomFonts.bold.fontFamily, size: 28) : UIFont(name: CustomFonts.regular.fontFamily, size: 20)
         
         stocksButton.isSelected = !showingFavorites
         favoritesButton.isSelected = showingFavorites
@@ -193,9 +203,15 @@ final class StocksMainVC: UIViewController {
     }
 }
 
+    //MARK: -Extensions
+
 extension StocksMainVC: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return displayedStocksList.count
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        1
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -203,21 +219,71 @@ extension StocksMainVC: UITableViewDelegate, UITableViewDataSource {
             return UITableViewCell()
         }
 
-        let stock = displayedStocksList[indexPath.row]
-
+        let stock = displayedStocksList[indexPath.section]
         cell.set(stock, indexPath)
         cell.delegate = self
+        if indexPath.section % 2 == 0 {
+            cell.backgroundColor = UIColor(rgb: 0xF0F4F7)
+        } else {
+            cell.backgroundColor = .white
+        }
+        
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return .leastNormalMagnitude
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let headerView = UIView()
+        headerView.backgroundColor = .clear
+        return headerView
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        stocksTableview.deselectRow(at: indexPath, animated: true)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         view.frame.height * 0.1
     }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        // Check if the animation is locked or not
+        if !isAnimationInProgress {
+            guard let searchBarHeightConstraint = searchBarHeightConstraint else { return }
+
+            // Check if an animation is required
+            if scrollView.contentOffset.y > 0 &&
+                searchBarHeightConstraint.constant > 0 {
+
+                searchBarHeightConstraint.constant = 0
+                animateTopViewHeight()
+            }
+            else if scrollView.contentOffset.y <= 0 &&
+                        searchBarHeightConstraint.constant <= 0 {
+
+                searchBarHeightConstraint.constant = searchBarHeight
+                animateTopViewHeight()
+            }
+        }
+    }
+
+    private func animateTopViewHeight() {
+        isAnimationInProgress = true
+
+        UIView.animate(withDuration: 0.2) {
+            self.view.layoutIfNeeded()
+        } completion: { [weak self] _ in
+            self?.isAnimationInProgress = false
+        }
+    }
 }
 
 extension StocksMainVC: StarColorDelegate {
     func didTapStar(_ index: IndexPath) {
-        let stock = displayedStocksList[index.row]
+        let stock = displayedStocksList[index.section]
         
         if let originalIndex = stocksList.tickerNames.firstIndex(where: { $0.ticker == stock.ticker }) {
             let stockToUpdate = stocksList.tickerNames[originalIndex]

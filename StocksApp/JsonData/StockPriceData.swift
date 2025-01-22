@@ -1,16 +1,11 @@
 //
-//  JsonData.swift
+//  StockPriceData.swift
 //  StocksApp
 //
-//  Created by Asset on 1/15/25.
+//  Created by Asset on 1/23/25.
 //
 
 import Foundation
-
-struct StockLogoNameData: Codable {
-    let logo: String
-    let name: String
-}
 
 struct StockPriceData: Codable {
     let currentPrice: Double
