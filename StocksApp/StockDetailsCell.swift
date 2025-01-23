@@ -13,7 +13,9 @@ protocol StarColorDelegate: AnyObject {
 
 final class StockDetailsCell: UITableViewCell {
     
-    private var networkingManager = NetworkingManager()
+    var task: URLSessionDataTask!
+    let imageCache = NSCache<AnyObject, AnyObject>()
+    var photoURL: URL?
     
     weak var delegate: StarColorDelegate?
     var stockIndexPath: IndexPath?
@@ -26,10 +28,11 @@ final class StockDetailsCell: UITableViewCell {
         return view
     }()
     
-    private lazy var stockImage: UIImageView = {
-        let image = UIImageView()
+    private lazy var stockImage: StockLogoImageView = {
+        let image = StockLogoImageView()
         image.clipsToBounds = true
         image.layer.cornerRadius = 14
+        image.image = nil
         
         image.translatesAutoresizingMaskIntoConstraints = false
         return image
@@ -111,12 +114,31 @@ final class StockDetailsCell: UITableViewCell {
         setupUI()
     }
     
-    override func prepareForReuse() {
-        stockImage.image = nil
-    }
-    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    //MARK: -Setting data from ViewController
+    
+    func set(_ stock: StockDetails, _ indexPath: IndexPath) {
+        titleLabel.text = stock.ticker
+        stockIndexPath = indexPath
+        starButton.imageView?.tintColor = stock.isFavorite.color
+        setFetchedDataToUI(stock)
+    }
+    
+    private func setFetchedDataToUI(_ stock: StockDetails) {
+        leftTitle.text = stock.name
+        priceLabel.text = stock.currentPrice
+        rightPriceLabel.text = stock.priceChange
+        rightPriceLabel.textColor = stock.priceChangeColor
+        loadImage(stock)
+    }
+    
+    private func loadImage(_ stock: StockDetails) {
+        if let url = URL(string: stock.logo) {
+            stockImage.loadImage(from: url)
+        }
     }
     
     //MARK: -Helper functions
@@ -125,58 +147,6 @@ final class StockDetailsCell: UITableViewCell {
         addSubviews()
         
         setConstraints()
-    }
-    
-    func set(_ stock: StockDetails, _ indexPath: IndexPath) {
-        titleLabel.text = stock.ticker
-        stockIndexPath = indexPath
-        starButton.imageView?.tintColor = stock.isFavorite.color
-        setupNetworking(stock.ticker)
-    }
-    
-    func setupNetworking(_ ticker: String) {
-        networkingManager.fetchData(type: .logoAndName(ticker), responseType: StockLogoNameData.self) { result in
-            switch result {
-            case .success(let data):
-                self.uploadPhotoURL(data.logo)
-                DispatchQueue.main.async {
-                    self.leftTitle.text = data.name
-                }
-            case .failure(let error):
-                print("Error fetching logo: \(error)")
-            }
-        }
-
-        networkingManager.fetchData(type: .priceInfo(ticker), responseType: StockPriceData.self) { result in
-            switch result {
-            case .success(let data):
-                let changePercentage = data.priceChange/data.currentPrice * 100
-                DispatchQueue.main.async {
-                    self.priceLabel.text = "$" + String(format: "%.2f" ,data.currentPrice)
-                    
-                    self.rightPriceLabel.text = data.priceChange >= 0 ?
-                    "+" + String(format: "%.2f",data.priceChange) + "$ (" + String(format: "%.2f", changePercentage) + "%)" :
-                    String(format: "%.2f",data.priceChange) + "$ (" + String(format: "%.2f", changePercentage) + "%)"
-                    
-                    self.rightPriceLabel.textColor = data.priceChange >= 0 ? AppColors.greenPriceColor.color : AppColors.redPriceColor.color
-                }
-            case .failure(let error):
-                print("Error fetching stock info: \(error)")
-            }
-        }
-    }
-    
-    func uploadPhotoURL(_ imageURL: String) {
-        if let url = URL(string: imageURL) {
-            URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
-                guard let self = self, let data = data, error == nil,
-                      let image = UIImage(data: data) else { return }
-                
-                DispatchQueue.main.async {
-                    self.stockImage.image = image
-                }
-            }.resume()
-        }
     }
     
     private func addSubviews() {

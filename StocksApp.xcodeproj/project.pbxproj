@@ -19,6 +19,7 @@
 		0F24A26C2D41785000B59677 /* AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F24A26B2D41785000B59677 /* AppColors.swift */; };
 		0F24A26F2D41844D00B59677 /* StockLogoNameData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F24A26E2D41844D00B59677 /* StockLogoNameData.swift */; };
 		0F24A2712D41846800B59677 /* StockPriceData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F24A2702D41846800B59677 /* StockPriceData.swift */; };
+		0F24A2742D4259AB00B59677 /* StockLogoImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F24A2732D4259AB00B59677 /* StockLogoImageView.swift */; };
 		0FF03EC02CF5CEF400519D49 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF03EBF2CF5CEF400519D49 /* AppDelegate.swift */; };
 		0FF03EC22CF5CEF400519D49 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF03EC12CF5CEF400519D49 /* SceneDelegate.swift */; };
 		0FF03EC42CF5CEF400519D49 /* StocksMainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF03EC32CF5CEF400519D49 /* StocksMainVC.swift */; };
@@ -42,6 +43,7 @@
 		0F24A26B2D41785000B59677 /* AppColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColors.swift; sourceTree = "<group>"; };
 		0F24A26E2D41844D00B59677 /* StockLogoNameData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockLogoNameData.swift; sourceTree = "<group>"; };
 		0F24A2702D41846800B59677 /* StockPriceData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockPriceData.swift; sourceTree = "<group>"; };
+		0F24A2732D4259AB00B59677 /* StockLogoImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockLogoImageView.swift; sourceTree = "<group>"; };
 		0FF03EBC2CF5CEF400519D49 /* StocksApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StocksApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FF03EBF2CF5CEF400519D49 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0FF03EC12CF5CEF400519D49 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -133,6 +135,7 @@
 				0FF03EDA2CF6103500519D49 /* StockDetails.swift */,
 				0FF03EDC2CF6106F00519D49 /* StocksList.swift */,
 				0F24A2582D3EB3FA00B59677 /* UIColor+rgb.swift */,
+				0F24A2732D4259AB00B59677 /* StockLogoImageView.swift */,
 			);
 			path = StocksApp;
 			sourceTree = "<group>";
@@ -228,6 +231,7 @@
 				0F24A2512D3B9A3000B59677 /* FetchType.swift in Sources */,
 				0FF03EC42CF5CEF400519D49 /* StocksMainVC.swift in Sources */,
 				0FF03EDB2CF6103500519D49 /* StockDetails.swift in Sources */,
+				0F24A2742D4259AB00B59677 /* StockLogoImageView.swift in Sources */,
 				0F24A2592D3EB3FA00B59677 /* UIColor+rgb.swift in Sources */,
 				0FF03EC02CF5CEF400519D49 /* AppDelegate.swift in Sources */,
 				0F24A2532D3B9A5700B59677 /* NetworkingError.swift in Sources */,

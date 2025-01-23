@@ -9,13 +9,26 @@ import UIKit
 
 final class StocksMainVC: UIViewController {
     
+    //MARK: -Constants
+    
+    private var fetchedStocks: [StockDetails] = []
+
     private var stocksList = StocksList()
+    private var networkingManager = NetworkingManager()
     
     private var showingFavorites = false
+    private var searchText: String = "" {
+        didSet {
+            stocksTableview.reloadData()
+        }
+    }
     private var displayedStocksList: [StockDetails] {
-        return showingFavorites
-            ? stocksList.tickerNames.filter { $0.isFavorite == .favorite }
-            : stocksList.tickerNames
+        let filteredStocks = showingFavorites
+            ? fetchedStocks.filter { $0.isFavorite == .favorite }
+            : fetchedStocks
+        return searchText.isEmpty
+            ? filteredStocks
+            : filteredStocks.filter { $0.name.lowercased().contains(searchText.lowercased()) }
     }
     
     private var searchBarHeightConstraint: NSLayoutConstraint?
@@ -121,12 +134,65 @@ final class StocksMainVC: UIViewController {
         cv.translatesAutoresizingMaskIntoConstraints = false
         return cv
     }()
+    
     //MARK: -Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        fetchStocks()
     }
+    
+    //MARK: -Networking Layer
+    
+    private func fetchStocks() {
+        var tempStocks: [StockDetails] = []
+        let dispatchGroup = DispatchGroup()
+
+        for ticker in stocksList.tickerNames {
+            var stock = StockDetails(ticker: ticker, isFavorite: .notFavorite, name: "", currentPrice: "", priceChange: "", logo: "", priceChangeColor: .green, logoImage: .star)
+
+            dispatchGroup.enter()
+            networkingManager.fetchData(type: .logoAndName(ticker), responseType: StockLogoNameData.self) { result in
+                switch result {
+                case .success(let data):
+                    stock.logo = data.logo
+                    stock.name = data.name
+                case .failure(let error):
+                    print("Error fetching logo and name: \(error)")
+                }
+                dispatchGroup.leave()
+            }
+
+            dispatchGroup.enter()
+            networkingManager.fetchData(type: .priceInfo(ticker), responseType: StockPriceData.self) { result in
+                switch result {
+                case .success(let data):
+                    let changePercentage = data.priceChange / data.currentPrice * 100
+                    stock.currentPrice = "$" + String(format: "%.2f", data.currentPrice)
+
+                    stock.priceChange = data.priceChange >= 0
+                        ? "+" + String(format: "%.2f", data.priceChange) + "$ (" + String(format: "%.2f", changePercentage) + "%)"
+                        : String(format: "%.2f", data.priceChange) + "$ (" + String(format: "%.2f", changePercentage) + "%)"
+
+                    stock.priceChangeColor = data.priceChange >= 0 ? AppColors.greenPriceColor.color : AppColors.redPriceColor.color
+                case .failure(let error):
+                    print("Error fetching stock price info: \(error)")
+                }
+                dispatchGroup.leave()
+            }
+
+            dispatchGroup.notify(queue: .main) {
+                tempStocks.append(stock)
+            }
+        }
+
+        dispatchGroup.notify(queue: .main) {
+            self.fetchedStocks = tempStocks
+            self.stocksTableview.reloadData()
+        }
+    }
+
     
     //MARK: -Helper Functions
     
@@ -141,6 +207,7 @@ final class StocksMainVC: UIViewController {
         stocksTableview.delegate = self
         stocksTableview.dataSource = self
         searchBar.delegate = self
+        searchBar.addTarget(self, action: #selector(searchRecords(_ :)), for: .editingChanged)
     }
     
     private func addSubviews() {
@@ -250,11 +317,9 @@ extension StocksMainVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        // Check if the animation is locked or not
         if !isAnimationInProgress {
             guard let searchBarHeightConstraint = searchBarHeightConstraint else { return }
 
-            // Check if an animation is required
             if scrollView.contentOffset.y > 0 &&
                 searchBarHeightConstraint.constant > 0 {
 
@@ -284,10 +349,10 @@ extension StocksMainVC: UITableViewDelegate, UITableViewDataSource {
 extension StocksMainVC: StarColorDelegate {
     func didTapStar(_ index: IndexPath) {
         let stock = displayedStocksList[index.section]
-        
-        if let originalIndex = stocksList.tickerNames.firstIndex(where: { $0.ticker == stock.ticker }) {
-            let stockToUpdate = stocksList.tickerNames[originalIndex]
-            stocksList.tickerNames[originalIndex].isFavorite = stockToUpdate.isFavorite == .favorite ? .notFavorite : .favorite
+    
+        if let originalIndex = fetchedStocks.firstIndex(where: { $0.ticker == stock.ticker }) {
+            let stockToUpdate = fetchedStocks[originalIndex]
+            fetchedStocks[originalIndex].isFavorite = stockToUpdate.isFavorite == .favorite ? .notFavorite : .favorite
         }
         
         if showingFavorites {
@@ -299,5 +364,12 @@ extension StocksMainVC: StarColorDelegate {
 }
 
 extension StocksMainVC: UITextFieldDelegate {
-    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        searchBar.resignFirstResponder()
+        return true
+    }
+
+    @objc func searchRecords(_ textField: UITextField) {
+        searchText = textField.text ?? ""
+    }
 }

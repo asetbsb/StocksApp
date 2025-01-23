@@ -3,4 +3,114 @@
    uuid = "F610EAA7-7066-4B3E-A102-22571956F681"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "AB5C4CA6-C946-4A6F-BBBE-CB0BCFEC4DF9"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "StocksApp/StockDetailsCell.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "17"
+            endingLineNumber = "17"
+            landmarkName = "StockDetailsCell"
+            landmarkType = "3">
+            <Locations>
+               <Location
+                  uuid = "AB5C4CA6-C946-4A6F-BBBE-CB0BCFEC4DF9 - d1ca416e5d85be8d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "one-time initialization function for identifier"
+                  moduleName = "StocksApp"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/a11/Documents/DevHouseProjects/TestNetworkingStocks/StocksApp/StocksApp/StockDetailsCell.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "17"
+                  endingLineNumber = "17"
+                  offsetFromSymbolStart = "52">
+               </Location>
+               <Location
+                  uuid = "AB5C4CA6-C946-4A6F-BBBE-CB0BCFEC4DF9 - 63044856b4a216f1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "StocksApp.StockDetailsCell.identifier.unsafeMutableAddressor : Swift.String"
+                  moduleName = "StocksApp"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/a11/Documents/DevHouseProjects/TestNetworkingStocks/StocksApp/StocksApp/StockDetailsCell.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "17"
+                  endingLineNumber = "17"
+                  offsetFromSymbolStart = "16">
+               </Location>
+               <Location
+                  uuid = "AB5C4CA6-C946-4A6F-BBBE-CB0BCFEC4DF9 - b99647112def3d29"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "static StocksApp.StockDetailsCell.identifier.getter : Swift.String"
+                  moduleName = "StocksApp"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/a11/Documents/DevHouseProjects/TestNetworkingStocks/StocksApp/StocksApp/StockDetailsCell.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "16">
+               </Location>
+               <Location
+                  uuid = "AB5C4CA6-C946-4A6F-BBBE-CB0BCFEC4DF9 - 939137b8d1738824"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "static StocksApp.StockDetailsCell.identifier.setter : Swift.String"
+                  moduleName = "StocksApp"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/a11/Documents/DevHouseProjects/TestNetworkingStocks/StocksApp/StocksApp/StockDetailsCell.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "17"
+                  endingLineNumber = "17"
+                  offsetFromSymbolStart = "0">
+               </Location>
+               <Location
+                  uuid = "AB5C4CA6-C946-4A6F-BBBE-CB0BCFEC4DF9 - f615be9e4b3b1be9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "static StocksApp.StockDetailsCell.identifier.modify : Swift.String"
+                  moduleName = "StocksApp"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/a11/Documents/DevHouseProjects/TestNetworkingStocks/StocksApp/StocksApp/StockDetailsCell.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "17"
+                  endingLineNumber = "17"
+                  offsetFromSymbolStart = "0">
+               </Location>
+               <Location
+                  uuid = "AB5C4CA6-C946-4A6F-BBBE-CB0BCFEC4DF9 - 48d16568f956dbae"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "static StocksApp.StockDetailsCell.identifier.modify : Swift.String with unmangled suffix &quot;.resume.0&quot;"
+                  moduleName = "StocksApp"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/a11/Documents/DevHouseProjects/TestNetworkingStocks/StocksApp/%3Ccompiler-generated%3E"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "16">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>
