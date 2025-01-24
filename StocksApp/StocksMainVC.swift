@@ -28,8 +28,12 @@ final class StocksMainVC: UIViewController {
             : fetchedStocks
         return searchText.isEmpty
             ? filteredStocks
-            : filteredStocks.filter { $0.name.lowercased().contains(searchText.lowercased()) }
+            : filteredStocks.filter {
+                $0.name.lowercased().contains(searchText.lowercased()) ||
+                $0.ticker.lowercased().contains(searchText.lowercased())
+            }
     }
+
     
     private var searchBarHeightConstraint: NSLayoutConstraint?
     private var searchBarHeight: CGFloat = 100
@@ -37,35 +41,16 @@ final class StocksMainVC: UIViewController {
     
     //MARK: -UI elements
     
-    private lazy var searchBar: UITextField = {
-        let tf = UITextField()
+    private lazy var searchBar: CustomSearchBar = {
+        let tf = CustomSearchBar()
         tf.layer.cornerRadius = view.frame.height * 0.035
-        tf.layer.borderWidth = 2
-        tf.layer.borderColor = UIColor.black.cgColor
-        tf.textAlignment = .center
-        tf.tintColor = .black
         
-        tf.attributedPlaceholder = NSAttributedString(
-            string: "Find company or ticker",
-            attributes: [
-                .font: UIFont(name: CustomFonts.semiBold.fontFamily, size: 18) ?? UIFont.systemFont(ofSize: 14),
-                .foregroundColor: UIColor.black
-            ]
-        )
-
-        let imageView = UIImageView(image: UIImage(systemName: "magnifyingglass"))
-        imageView.contentMode = .scaleAspectFit
-        imageView.tintColor = .black
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        tf.addSubview(imageView)
-
-
-        NSLayoutConstraint.activate([
-            imageView.leadingAnchor.constraint(equalTo: tf.leadingAnchor, constant: 24),
-            imageView.centerYAnchor.constraint(equalTo: tf.centerYAnchor),
-            imageView.widthAnchor.constraint(equalTo: tf.heightAnchor, multiplier: 0.5),
-            imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor)
-        ])
+        tf.applyBasicDesign()
+        tf.applyCustomSearchBarDesign()
+        tf.applyCustomClearButton()
+        
+        tf.clearButton.addTarget(self, action: #selector(clearClicked), for: .touchUpInside)
+        tf.addTarget(self, action: #selector(searchRecords(_ :)), for: .editingChanged)
 
         tf.translatesAutoresizingMaskIntoConstraints = false
         return tf
@@ -207,7 +192,6 @@ final class StocksMainVC: UIViewController {
         stocksTableview.delegate = self
         stocksTableview.dataSource = self
         searchBar.delegate = self
-        searchBar.addTarget(self, action: #selector(searchRecords(_ :)), for: .editingChanged)
     }
     
     private func addSubviews() {
@@ -346,6 +330,8 @@ extension StocksMainVC: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
+    //MARK: -StarColorDelegate
+
 extension StocksMainVC: StarColorDelegate {
     func didTapStar(_ index: IndexPath) {
         let stock = displayedStocksList[index.section]
@@ -362,14 +348,33 @@ extension StocksMainVC: StarColorDelegate {
         }
     }
 }
+    
+    //MARK: -UITextFieldDelegate
 
 extension StocksMainVC: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         searchBar.resignFirstResponder()
         return true
     }
+    
+    @objc func clearClicked() {
+        searchBar.text = ""
+        searchText = ""
+        searchBar.addGlassImage()
+        searchBar.removeClearButton()
+        searchBar.removeArrowImage()
+    }
 
     @objc func searchRecords(_ textField: UITextField) {
         searchText = textField.text ?? ""
+        if searchText.isEmpty {
+            searchBar.addGlassImage()
+            searchBar.removeClearButton()
+            searchBar.removeArrowImage()
+        } else {
+            searchBar.removeGlassImage()
+            searchBar.addClearButton()
+            searchBar.addArrowImage()
+        }
     }
 }

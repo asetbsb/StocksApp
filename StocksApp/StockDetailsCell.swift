@@ -13,10 +13,6 @@ protocol StarColorDelegate: AnyObject {
 
 final class StockDetailsCell: UITableViewCell {
     
-    var task: URLSessionDataTask!
-    let imageCache = NSCache<AnyObject, AnyObject>()
-    var photoURL: URL?
-    
     weak var delegate: StarColorDelegate?
     var stockIndexPath: IndexPath?
     static var identifier = "StockDetailsTableViewСellIdentifier"
