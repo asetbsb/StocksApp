@@ -40,6 +40,7 @@ class CustomSearchBar: UITextField {
         
         arrowImageView.contentMode = .scaleAspectFit
         arrowImageView.tintColor = .black
+        arrowImageView.isUserInteractionEnabled = true
         arrowImageView.translatesAutoresizingMaskIntoConstraints = false
 
         addImages()
@@ -59,7 +60,7 @@ class CustomSearchBar: UITextField {
         NSLayoutConstraint.activate([
             clearButton.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -24),
             clearButton.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-            clearButton.widthAnchor.constraint(equalTo: self.heightAnchor, multiplier: 0.8),
+            clearButton.widthAnchor.constraint(equalTo: self.heightAnchor, multiplier: 0.5),
             clearButton.heightAnchor.constraint(equalTo: clearButton.widthAnchor),
             
             glassImageView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 24),
@@ -72,6 +73,20 @@ class CustomSearchBar: UITextField {
             arrowImageView.widthAnchor.constraint(equalTo: self.heightAnchor, multiplier: 0.5),
             arrowImageView.heightAnchor.constraint(equalTo: arrowImageView.widthAnchor)
         ])
+    }
+    
+    func togglePlaceholder(isEmpty: Bool) {
+        if isEmpty {
+            placeholder = ""
+        } else {
+            attributedPlaceholder = NSAttributedString(
+                string: "Find company or ticker",
+                attributes: [
+                    .font: UIFont(name: CustomFonts.semiBold.fontFamily, size: 18) ?? UIFont.systemFont(ofSize: 14),
+                    .foregroundColor: UIColor.black
+                ]
+            )
+        }
     }
     
     func toggleImages(isSearchEmpty: Bool) {

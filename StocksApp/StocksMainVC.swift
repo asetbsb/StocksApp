@@ -44,11 +44,14 @@ final class StocksMainVC: UIViewController {
     private lazy var searchBar: CustomSearchBar = {
         let tf = CustomSearchBar()
         tf.layer.cornerRadius = view.frame.height * 0.035
+        tf.isUserInteractionEnabled = true
         
         tf.setupUI()
         
         tf.clearButton.addTarget(self, action: #selector(clearClicked), for: .touchUpInside)
         tf.addTarget(self, action: #selector(searchRecords(_ :)), for: .editingChanged)
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(resetToInitialState))
+        tf.arrowImageView.addGestureRecognizer(tapGesture)
 
         tf.translatesAutoresizingMaskIntoConstraints = false
         return tf
@@ -350,6 +353,14 @@ extension StocksMainVC: UITextFieldDelegate {
         searchBar.text = ""
         searchText = ""
         searchBar.toggleImages(isSearchEmpty: true)
+        searchBar.togglePlaceholder(isEmpty: true)
+    }
+    
+    @objc private func resetToInitialState() {
+        searchBar.text = ""
+        searchText = ""
+        searchBar.toggleImages(isSearchEmpty: true)
+        searchBar.togglePlaceholder(isEmpty: false)
     }
 
     @objc func searchRecords(_ textField: UITextField) {

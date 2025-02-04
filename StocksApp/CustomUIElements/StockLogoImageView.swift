@@ -11,7 +11,7 @@ import UIKit
 let imageCache = NSCache<AnyObject, AnyObject>()
 
 class StockLogoImageView: UIImageView {
-    var task: URLSessionDataTask!
+    var task: URLSessionDataTask?
     let activityIndicator = UIActivityIndicatorView(style: .medium)
     
     func loadImage(from url: URL) {
@@ -47,7 +47,7 @@ class StockLogoImageView: UIImageView {
             }
         }
         
-        task.resume()
+        task?.resume()
     }
     
     func addActivityIndicator() {
