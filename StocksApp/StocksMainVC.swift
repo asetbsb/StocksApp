@@ -349,21 +349,15 @@ extension StocksMainVC: UITextFieldDelegate {
     @objc func clearClicked() {
         searchBar.text = ""
         searchText = ""
-        searchBar.addGlassImage()
-        searchBar.removeClearButton()
-        searchBar.removeArrowImage()
+        searchBar.toggleImages(isSearchEmpty: true)
     }
 
     @objc func searchRecords(_ textField: UITextField) {
         searchText = textField.text ?? ""
         if searchText.isEmpty {
-            searchBar.addGlassImage()
-            searchBar.removeClearButton()
-            searchBar.removeArrowImage()
+            searchBar.toggleImages(isSearchEmpty: true)
         } else {
-            searchBar.removeGlassImage()
-            searchBar.addClearButton()
-            searchBar.addArrowImage()
+            searchBar.toggleImages(isSearchEmpty: false)
         }
     }
 }

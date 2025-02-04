@@ -28,9 +28,6 @@ class CustomSearchBar: UITextField {
                 .foregroundColor: UIColor.black
             ]
         )
-        
-        clearButtonMode = .never
-        rightViewMode   = .whileEditing
 
         clearButton.setImage(UIImage(systemName: "xmark"), for: .normal)
         clearButton.contentMode = .scaleAspectFit
@@ -44,44 +41,32 @@ class CustomSearchBar: UITextField {
         arrowImageView.contentMode = .scaleAspectFit
         arrowImageView.tintColor = .black
         arrowImageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        addGlassImage()
+
+        addImages()
     }
     
-    func removeClearButton() {
-        clearButton.removeFromSuperview()
-    }
-    
-    func addClearButton() {
+    func addImages() {
+        addSubview(glassImageView)
+        addSubview(arrowImageView)
         addSubview(clearButton)
         
+        setConstraints()
+        clearButton.isHidden = true
+        arrowImageView.isHidden = true
+    }
+    
+    func setConstraints() {
         NSLayoutConstraint.activate([
             clearButton.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -24),
             clearButton.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-            clearButton.widthAnchor.constraint(equalTo: self.heightAnchor, multiplier: 0.5),
-            clearButton.heightAnchor.constraint(equalTo: clearButton.widthAnchor)
-        ])
-    }
-    
-    func addGlassImage() {
-        addSubview(glassImageView)
-
-        NSLayoutConstraint.activate([
+            clearButton.widthAnchor.constraint(equalTo: self.heightAnchor, multiplier: 0.8),
+            clearButton.heightAnchor.constraint(equalTo: clearButton.widthAnchor),
+            
             glassImageView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 24),
             glassImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
             glassImageView.widthAnchor.constraint(equalTo: self.heightAnchor, multiplier: 0.5),
-            glassImageView.heightAnchor.constraint(equalTo: glassImageView.widthAnchor)
-        ])
-    }
-    
-    func removeGlassImage() {
-        glassImageView.removeFromSuperview()
-    }
-    
-    func addArrowImage() {
-        addSubview(arrowImageView)
-
-        NSLayoutConstraint.activate([
+            glassImageView.heightAnchor.constraint(equalTo: glassImageView.widthAnchor),
+            
             arrowImageView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 24),
             arrowImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
             arrowImageView.widthAnchor.constraint(equalTo: self.heightAnchor, multiplier: 0.5),
@@ -89,7 +74,9 @@ class CustomSearchBar: UITextField {
         ])
     }
     
-    func removeArrowImage() {
-        arrowImageView.removeFromSuperview()
+    func toggleImages(isSearchEmpty: Bool) {
+        glassImageView.isHidden = isSearchEmpty ? false : true
+        clearButton.isHidden = isSearchEmpty ? true : false
+        arrowImageView.isHidden = isSearchEmpty ? true : false
     }
 }

@@ -141,7 +141,6 @@ final class StockDetailsCell: UITableViewCell {
     
     private func setupUI() {
         addSubviews()
-        
         setConstraints()
     }
     
