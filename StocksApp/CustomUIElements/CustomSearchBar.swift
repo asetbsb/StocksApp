@@ -13,14 +13,12 @@ class CustomSearchBar: UITextField {
     let clearButton = UIButton()
     let arrowImageView = UIImageView(image: UIImage(systemName: "arrow.left"))
     
-    func applyBasicDesign() {
+    func setupUI() {
         layer.borderWidth = 2
         layer.borderColor = UIColor.black.cgColor
         textAlignment = .center
         tintColor = .black
-    }
-    
-    func applyCustomSearchBarDesign() {
+        
         font = UIFont(name: CustomFonts.semiBold.fontFamily, size: 18)
         
         attributedPlaceholder = NSAttributedString(
@@ -30,6 +28,14 @@ class CustomSearchBar: UITextField {
                 .foregroundColor: UIColor.black
             ]
         )
+        
+        clearButtonMode = .never
+        rightViewMode   = .whileEditing
+
+        clearButton.setImage(UIImage(systemName: "xmark"), for: .normal)
+        clearButton.contentMode = .scaleAspectFit
+        clearButton.tintColor = .black
+        clearButton.translatesAutoresizingMaskIntoConstraints = false
 
         glassImageView.contentMode = .scaleAspectFit
         glassImageView.tintColor = .black
@@ -40,16 +46,6 @@ class CustomSearchBar: UITextField {
         arrowImageView.translatesAutoresizingMaskIntoConstraints = false
         
         addGlassImage()
-    }
-    
-    func applyCustomClearButton() {
-        clearButtonMode = .never
-        rightViewMode   = .whileEditing
-
-        clearButton.setImage(UIImage(systemName: "xmark"), for: .normal)
-        clearButton.contentMode = .scaleAspectFit
-        clearButton.tintColor = .black
-        clearButton.translatesAutoresizingMaskIntoConstraints = false
     }
     
     func removeClearButton() {

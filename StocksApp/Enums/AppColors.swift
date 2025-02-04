@@ -14,6 +14,7 @@ enum AppColors {
     case notFavoriteColor
     case greenPriceColor
     case redPriceColor
+    case greyColor
     
     var color: UIColor {
         switch self {
@@ -25,6 +26,8 @@ enum AppColors {
             return UIColor(rgb: 0x24B25D)
         case .redPriceColor:
             return UIColor(rgb: 0xB22424)
+        case .greyColor:
+            return UIColor(rgb: 0xF0F4F7)
         }
     }
 }

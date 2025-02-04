@@ -120,21 +120,21 @@ final class StockDetailsCell: UITableViewCell {
         titleLabel.text = stock.ticker
         stockIndexPath = indexPath
         starButton.imageView?.tintColor = stock.isFavorite.color
-        setFetchedDataToUI(stock)
+        setupUI(with: stock)
     }
     
-    private func setFetchedDataToUI(_ stock: StockDetails) {
+    private func setupUI(with stock: StockDetails) {
         leftTitle.text = stock.name
         priceLabel.text = stock.currentPrice
         rightPriceLabel.text = stock.priceChange
         rightPriceLabel.textColor = stock.priceChangeColor
-        loadImage(stock)
+        if let imageURL = URL(string: stock.logo) {
+            loadImage(from: imageURL)
+        }
     }
     
-    private func loadImage(_ stock: StockDetails) {
-        if let url = URL(string: stock.logo) {
-            stockImage.loadImage(from: url)
-        }
+    private func loadImage(from url: URL) {
+        stockImage.loadImage(from: url)
     }
     
     //MARK: -Helper functions

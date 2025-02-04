@@ -45,9 +45,7 @@ final class StocksMainVC: UIViewController {
         let tf = CustomSearchBar()
         tf.layer.cornerRadius = view.frame.height * 0.035
         
-        tf.applyBasicDesign()
-        tf.applyCustomSearchBarDesign()
-        tf.applyCustomClearButton()
+        tf.setupUI()
         
         tf.clearButton.addTarget(self, action: #selector(clearClicked), for: .touchUpInside)
         tf.addTarget(self, action: #selector(searchRecords(_ :)), for: .editingChanged)
@@ -107,17 +105,6 @@ final class StocksMainVC: UIViewController {
         
         tv.translatesAutoresizingMaskIntoConstraints = false
         return tv
-    }()
-    
-    private lazy var searchCollectionview: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        
-        let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        cv.backgroundColor = .clear
-        
-        cv.translatesAutoresizingMaskIntoConstraints = false
-        return cv
     }()
     
     //MARK: -Lifecycle
@@ -203,6 +190,8 @@ final class StocksMainVC: UIViewController {
 
         view.addSubview(stocksTableview)
     }
+    
+    //MARK: -Constraints
     
     private func setupConstraints() {
         let leftRightSpacing = view.frame.width * 0.05

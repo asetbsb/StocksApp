@@ -12,12 +12,12 @@ let imageCache = NSCache<AnyObject, AnyObject>()
 
 class StockLogoImageView: UIImageView {
     var task: URLSessionDataTask!
-    let spinner = UIActivityIndicatorView(style: .medium)
+    let activityIndicator = UIActivityIndicatorView(style: .medium)
     
     func loadImage(from url: URL) {
         image = nil
         
-        addSpinner()
+        addActivityIndicator()
         
         if let task = task {
             task.cancel()
@@ -25,7 +25,7 @@ class StockLogoImageView: UIImageView {
         
         if let imageFromCache = imageCache.object(forKey: url.absoluteString as AnyObject) as? UIImage {
             image = imageFromCache
-            removeSpinner()
+            removeActivityIndicator()
             return
         }
         
@@ -43,24 +43,24 @@ class StockLogoImageView: UIImageView {
             
             DispatchQueue.main.async {
                 self.image = newImage
-                self.removeSpinner()
+                self.removeActivityIndicator()
             }
         }
         
         task.resume()
     }
     
-    func addSpinner() {
-        addSubview(spinner)
+    func addActivityIndicator() {
+        addSubview(activityIndicator)
         
-        spinner.translatesAutoresizingMaskIntoConstraints = false
-        spinner.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-        spinner.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        activityIndicator.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         
-        spinner.startAnimating()
+        activityIndicator.startAnimating()
     }
     
-    func removeSpinner() {
-        spinner.removeFromSuperview()
+    func removeActivityIndicator() {
+        activityIndicator.removeFromSuperview()
     }
 }
