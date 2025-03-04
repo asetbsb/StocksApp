@@ -8,16 +8,14 @@
 import UIKit
 
 protocol StarColorDelegate: AnyObject {
-    func didTapStar (_ index: Int, _ color: UIColor)
+    func didTapStar (_ index: IndexPath)
 }
 
-final class StockCell: UITableViewCell {
-    
-    private var networkingManager = NetworkingManager()
+final class StockDetailsCell: UITableViewCell {
     
     weak var delegate: StarColorDelegate?
-    var stockIndex: Int?
-    static var identifier = "TableViewCellIdentifier"
+    var stockIndexPath: IndexPath?
+    static var identifier = "StockDetailsTableViewСellIdentifier"
     
     private lazy var containerView: UIView = {
         let view = UIView()
@@ -26,10 +24,11 @@ final class StockCell: UITableViewCell {
         return view
     }()
     
-    private lazy var stockImage: UIImageView = {
-        let image = UIImageView()
+    private lazy var stockImage: StockLogoImageView = {
+        let image = StockLogoImageView()
         image.clipsToBounds = true
-        image.layer.cornerRadius = 12
+        image.layer.cornerRadius = 14
+        image.image = nil
         
         image.translatesAutoresizingMaskIntoConstraints = false
         return image
@@ -46,8 +45,8 @@ final class StockCell: UITableViewCell {
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "YNDX"
-        label.font = .systemFont(ofSize: 26, weight: .bold)
+        label.font = UIFont(name: CustomFonts.bold.fontFamily, size: 20)
+        label.numberOfLines = 1
         
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -55,9 +54,10 @@ final class StockCell: UITableViewCell {
     
     private lazy var starButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "star.fill"), for: .normal)
-        button.addTarget(self, action: #selector(starPressed(_:)), for: .touchUpInside)
-        button.tintColor = .yellow
+        let image = UIImage(named: "Star")?.withRenderingMode(.alwaysTemplate)
+        
+        button.setImage(image, for: .normal)
+        button.addTarget(self, action: #selector(starPressed), for: .touchUpInside)
         
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -65,7 +65,8 @@ final class StockCell: UITableViewCell {
     
     private lazy var priceLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 26, weight: .bold)
+        label.font = UIFont(name: CustomFonts.bold.fontFamily, size: 20)
+        label.numberOfLines = 1
         
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -82,8 +83,9 @@ final class StockCell: UITableViewCell {
     
     private lazy var leftTitle: UILabel = {
         let label = UILabel()
-        label.text = "Yandex, LLC"
-        label.font = .systemFont(ofSize: 20)
+        label.font = UIFont(name: CustomFonts.semiBold.fontFamily, size: 14)
+        label.numberOfLines = 1
+        label.adjustsFontSizeToFitWidth = true
         
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -91,9 +93,10 @@ final class StockCell: UITableViewCell {
     
     private lazy var rightPriceLabel: UILabel = {
         let label = UILabel()
-
-        label.font = .systemFont(ofSize: 20)
-        label.textColor = .green
+        
+        label.font = UIFont(name: CustomFonts.regular.fontFamily, size: 14)
+        label.numberOfLines = 1
+        label.adjustsFontSizeToFitWidth = true
         
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -111,69 +114,42 @@ final class StockCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    //MARK: -Setting data from ViewController
+    
+    func set(_ stock: StockDetails, _ indexPath: IndexPath) {
+        titleLabel.text = stock.ticker
+        stockIndexPath = indexPath
+        starButton.imageView?.tintColor = stock.isFavorite.color
+        setupUI(with: stock)
+    }
+    
+    private func setupUI(with stock: StockDetails) {
+        leftTitle.text = stock.name
+        priceLabel.text = stock.currentPrice
+        rightPriceLabel.text = stock.priceChange
+        rightPriceLabel.textColor = stock.priceChangeColor
+        if let imageURL = URL(string: stock.logo) {
+            loadImage(from: imageURL)
+        }
+    }
+    
+    private func loadImage(from url: URL) {
+        stockImage.loadImage(from: url)
+    }
+    
     //MARK: -Helper functions
     
     private func setupUI() {
-        self.clipsToBounds = true
-        self.layer.cornerRadius = 20
-        
         addSubviews()
         setConstraints()
     }
     
-    func setupNetworking(_ ticker: String) {
-        networkingManager.fetchStockLogo(ticker) { result in
-            switch result {
-            case .success(let (name, logoURL)):
-                self.uploadPhotoURL(logoURL)
-                DispatchQueue.main.async {
-                    self.leftTitle.text = name
-                }
-            case .failure(let error):
-                print("Error fetching logo: \(error)")
-            }
-        }
-
-        // Fetch Stock Info
-        networkingManager.fetchStockInfo(ticker) { result in
-            switch result {
-            case .success(let (currentPrice, priceChange)):
-                DispatchQueue.main.async {
-                    self.priceLabel.text = String(currentPrice)
-                    self.rightPriceLabel.text = String(priceChange)
-                }
-            case .failure(let error):
-                print("Error fetching stock info: \(error)")
-            }
-        }
-    }
-    
-    func uploadPhotoURL(_ imageURL: String) {
-        if let url = URL(string: imageURL) {
-            URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
-                guard let self = self, let data = data, error == nil,
-                      let image = UIImage(data: data) else { return }
-                
-                DispatchQueue.main.async {
-                    self.stockImage.image = image
-                }
-            }.resume()
-        }
-    }
-    
-    func set(_ stock: StockStruct, _ index: Int) {
-        titleLabel.text = stock.ticker
-        if stock.isFavorite {
-            starButton.tintColor = .yellow
-        } else {
-            starButton.tintColor = .lightGray
-        }
-        stockIndex = index
-        
-        setupNetworking(stock.ticker)
-    }
-    
     private func addSubviews() {
+        
+        self.layer.cornerRadius = 20
+        self.layer.masksToBounds = true
+        self.clipsToBounds = true
+        
         addSubview(containerView)
         
         containerView.addSubview(stockImage)
@@ -191,24 +167,25 @@ final class StockCell: UITableViewCell {
     
     private func setConstraints() {
         NSLayoutConstraint.activate([
-            containerView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.9),
-            containerView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 1.0),
-            containerView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            containerView.heightAnchor.constraint(equalTo: self.heightAnchor),
+            containerView.widthAnchor.constraint(equalTo: self.widthAnchor),
             containerView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            containerView.centerXAnchor.constraint(equalTo: centerXAnchor),
+
             
-            stockImage.heightAnchor.constraint(equalTo: containerView.heightAnchor, multiplier: 0.8),
+            stockImage.heightAnchor.constraint(equalTo: containerView.heightAnchor, multiplier: 0.78),
             stockImage.widthAnchor.constraint(equalTo: stockImage.heightAnchor),
             stockImage.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 8),
             stockImage.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
             
             topView.leadingAnchor.constraint(equalTo: stockImage.trailingAnchor, constant: 10),
-            topView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: frame.height * 0.1),
-            topView.heightAnchor.constraint(equalTo: containerView.heightAnchor, multiplier: 0.4),
+            topView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 20),
+            topView.heightAnchor.constraint(equalTo: containerView.heightAnchor, multiplier: 0.3),
             topView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -10),
             
             bottomView.leadingAnchor.constraint(equalTo: stockImage.trailingAnchor, constant: 10),
-            bottomView.topAnchor.constraint(equalTo: topView.bottomAnchor, constant: 4),
-            bottomView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -frame.height * 0.1),
+            bottomView.topAnchor.constraint(equalTo: topView.bottomAnchor, constant: 2),
+            bottomView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -(frame.height * 0.25)),
             bottomView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -10),
             
             //inside topview
@@ -235,14 +212,9 @@ final class StockCell: UITableViewCell {
     //MARK: -Action functions
     
     @objc
-    private func starPressed(_ sender: UIButton) {
-        if sender.tintColor == .lightGray {
-            sender.tintColor = .yellow
-            delegate?.didTapStar(stockIndex ?? 0, .yellow)
-        } else {
-            sender.tintColor = .lightGray
-            delegate?.didTapStar(stockIndex ?? 0, .lightGray)
-        }
+    private func starPressed() {
+        guard let indexPath = stockIndexPath else {return}
+        delegate?.didTapStar(indexPath)
     }
 }
 
