@@ -389,9 +389,22 @@ extension StocksMainVC: StarColorDelegate {
 
 extension StocksMainVC: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        guard let query = textField.text, !query.trimmingCharacters(in: .whitespaces).isEmpty else {
+            return false
+        }
+
+        CoreDataManager.shared.saveSearchQuery(query)
+
+        if let emptySearchView = emptySearchView as? EmptySearchView {
+            emptySearchView.updateSearchHistory()
+        }
+
+        // Dismiss the keyboard
         searchBar.resignFirstResponder()
+        
         return true
     }
+
     
     @objc func clearClicked() {
         searchBar.text = ""

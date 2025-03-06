@@ -1,10 +1,3 @@
-//
-//  EmptySearchView.swift
-//  StocksApp
-//
-//  Created by Asset on 3/6/25.
-//
-
 import Foundation
 import UIKit
 
@@ -59,7 +52,6 @@ class EmptySearchView: UIView {
     }()
 
     var popularRequests = ["Apple", "Amazon", "Google", "Tesla", "Microsoft", "Alibaba"]
-    var searchedRequests = ["Nvidia", "Yandex", "Intel", "Visa", "AMD", "Baidu"]
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -83,7 +75,7 @@ class EmptySearchView: UIView {
 
     private func setupStackViews() {
         populateVerticalStackView(firstVerticalStack, with: popularRequests)
-        populateVerticalStackView(secondVerticalStack, with: searchedRequests)
+        updateSearchHistory()
     }
 
     private func populateVerticalStackView(_ verticalStackView: UIStackView, with items: [String]) {
@@ -153,5 +145,11 @@ class EmptySearchView: UIView {
             secondVerticalStack.trailingAnchor.constraint(equalTo: secondScroll.trailingAnchor),
             secondVerticalStack.bottomAnchor.constraint(equalTo: secondScroll.bottomAnchor)
         ])
+    }
+
+    func updateSearchHistory() {
+        let searchHistory = CoreDataManager.shared.fetchSearchHistory()
+        secondVerticalStack.arrangedSubviews.forEach { $0.removeFromSuperview() } // Clear old views
+        populateVerticalStackView(secondVerticalStack, with: searchHistory) // Load new data
     }
 }

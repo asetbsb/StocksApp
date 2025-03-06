@@ -3,33 +3,33 @@ import UIKit
 
 final class CoreDataManager {
     static let shared = CoreDataManager()
-
+    
     private let persistentContainer: NSPersistentContainer
-
+    
     private init() {
         persistentContainer = NSPersistentContainer(name: "StockItem")
         persistentContainer.loadPersistentStores { _, error in
             if let error = error {
-                fatalError("Failed to load Core Data stack: \(error)")
+                fatalError("Core Data failed to load: \(error)")
             }
         }
     }
-
+    
     var context: NSManagedObjectContext {
         return persistentContainer.viewContext
     }
-
+    
     func saveContext() {
-        let context = persistentContainer.viewContext
         if context.hasChanges {
             do {
                 try context.save()
             } catch {
-                print("Failed to save context: \(error)")
+                print("Failed to save Core Data: \(error)")
             }
         }
     }
 
+    // MARK: - Stock Favorites Management
     func fetchStocks() -> [String: Bool] {
         let fetchRequest: NSFetchRequest<StockItem> = StockItem.fetchRequest()
         do {
@@ -61,6 +61,39 @@ final class CoreDataManager {
             saveContext()
         } catch {
             print("Failed to save stock: \(error)")
+        }
+    }
+
+    // MARK: - Search History Management
+    func saveSearchQuery(_ query: String) {
+        let fetchRequest: NSFetchRequest<SearchRequest> = SearchRequest.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "query == %@", query) // Avoid duplicates
+
+        do {
+            let results = try context.fetch(fetchRequest)
+            if let existingSearch = results.first {
+                existingSearch.timestamp = Date() // Update timestamp
+            } else {
+                let newSearch = SearchRequest(context: context)
+                newSearch.query = query
+                newSearch.timestamp = Date()
+            }
+            saveContext()
+        } catch {
+            print("Error saving search query: \(error)")
+        }
+    }
+    
+    func fetchSearchHistory() -> [String] {
+        let request: NSFetchRequest<SearchRequest> = SearchRequest.fetchRequest()
+        request.sortDescriptors = [NSSortDescriptor(key: "timestamp", ascending: false)]
+        request.fetchLimit = 10
+        
+        do {
+            return try context.fetch(request).compactMap { $0.query }
+        } catch {
+            print("Error fetching search history: \(error)")
+            return []
         }
     }
 }
