@@ -25,6 +25,7 @@
 		0F28602F2D7997ED00A33EEB /* StockItem+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F28602D2D7997ED00A33EEB /* StockItem+CoreDataClass.swift */; };
 		0F2860302D7997ED00A33EEB /* StockItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F28602E2D7997ED00A33EEB /* StockItem+CoreDataProperties.swift */; };
 		0F2860322D79A86F00A33EEB /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F2860312D79A86F00A33EEB /* CoreDataManager.swift */; };
+		0F2860342D79B4B800A33EEB /* EmptySearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F2860332D79B4B800A33EEB /* EmptySearchView.swift */; };
 		0FF03EC02CF5CEF400519D49 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF03EBF2CF5CEF400519D49 /* AppDelegate.swift */; };
 		0FF03EC22CF5CEF400519D49 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF03EC12CF5CEF400519D49 /* SceneDelegate.swift */; };
 		0FF03EC42CF5CEF400519D49 /* StocksMainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF03EC32CF5CEF400519D49 /* StocksMainVC.swift */; };
@@ -54,6 +55,7 @@
 		0F28602D2D7997ED00A33EEB /* StockItem+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StockItem+CoreDataClass.swift"; sourceTree = "<group>"; };
 		0F28602E2D7997ED00A33EEB /* StockItem+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StockItem+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0F2860312D79A86F00A33EEB /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
+		0F2860332D79B4B800A33EEB /* EmptySearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptySearchView.swift; sourceTree = "<group>"; };
 		0FF03EBC2CF5CEF400519D49 /* StocksApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StocksApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FF03EBF2CF5CEF400519D49 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0FF03EC12CF5CEF400519D49 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -122,6 +124,7 @@
 				0F24A2772D43DA1800B59677 /* CustomSearchBar.swift */,
 				0F24A2732D4259AB00B59677 /* StockLogoImageView.swift */,
 				0F24A2582D3EB3FA00B59677 /* UIColor+rgb.swift */,
+				0F2860332D79B4B800A33EEB /* EmptySearchView.swift */,
 			);
 			path = CustomUIElements;
 			sourceTree = "<group>";
@@ -260,6 +263,7 @@
 				0F24A2712D41846800B59677 /* StockPriceData.swift in Sources */,
 				0F24A2642D41706300B59677 /* CustomFonts.swift in Sources */,
 				0F24A26F2D41844D00B59677 /* StockLogoNameData.swift in Sources */,
+				0F2860342D79B4B800A33EEB /* EmptySearchView.swift in Sources */,
 				0F24A2512D3B9A3000B59677 /* FetchType.swift in Sources */,
 				0FF03EC42CF5CEF400519D49 /* StocksMainVC.swift in Sources */,
 				0F2860272D7996CA00A33EEB /* StockItem.xcdatamodeld in Sources */,

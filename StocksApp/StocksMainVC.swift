@@ -50,8 +50,7 @@ final class StocksMainVC: UIViewController {
         
         tf.clearButton.addTarget(self, action: #selector(clearClicked), for: .touchUpInside)
         tf.addTarget(self, action: #selector(searchRecords(_ :)), for: .editingChanged)
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(resetToInitialState))
-        tf.arrowImageView.addGestureRecognizer(tapGesture)
+        tf.arrowButton.addTarget(self, action: #selector(showSearchHistory), for: .touchUpInside)
 
         tf.translatesAutoresizingMaskIntoConstraints = false
         return tf
@@ -108,6 +107,16 @@ final class StocksMainVC: UIViewController {
         
         tv.translatesAutoresizingMaskIntoConstraints = false
         return tv
+    }()
+    
+    private lazy var emptySearchView: EmptySearchView = {
+        let view = EmptySearchView()
+        view.addSubviews()
+        view.setupConstraints()
+        view.isHidden = true
+        
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
     }()
     
     //MARK: -Lifecycle
@@ -200,7 +209,31 @@ final class StocksMainVC: UIViewController {
         view.addSubview(stocksTableview)
     }
     
+    private func toggleSearchViews(showHistory: Bool) {
+        if showHistory {
+            view.addSubview(emptySearchView)
+            buttonsView.isHidden = true
+            stocksTableview.isHidden = true
+            emptySearchView.isHidden = false
+            setupEmptySearchViewConstraints()
+        } else {
+            buttonsView.isHidden = false
+            stocksTableview.isHidden = false
+            emptySearchView.isHidden = true
+        }
+    }
+    
     //MARK: -Constraints
+    
+    private func setupEmptySearchViewConstraints() {
+        let spacing = view.frame.width * 0.07
+        
+        NSLayoutConstraint.activate([
+            emptySearchView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 30),
+            emptySearchView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: spacing),
+            emptySearchView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -spacing)
+        ])
+    }
     
     private func setupConstraints() {
         let leftRightSpacing = view.frame.width * 0.05
@@ -367,11 +400,12 @@ extension StocksMainVC: UITextFieldDelegate {
         searchBar.togglePlaceholder(isEmpty: true)
     }
     
-    @objc private func resetToInitialState() {
+    @objc private func showSearchHistory() {
         searchBar.text = ""
         searchText = ""
-        searchBar.toggleImages(isSearchEmpty: true)
-        searchBar.togglePlaceholder(isEmpty: false)
+        searchBar.clearButton.isHidden = true
+        searchBar.togglePlaceholder(isEmpty: true)
+        toggleSearchViews(showHistory: true)
     }
 
     @objc func searchRecords(_ textField: UITextField) {
@@ -380,6 +414,9 @@ extension StocksMainVC: UITextFieldDelegate {
             searchBar.toggleImages(isSearchEmpty: true)
         } else {
             searchBar.toggleImages(isSearchEmpty: false)
+            if emptySearchView.isHidden == false {
+                toggleSearchViews(showHistory: false)
+            }
         }
     }
 }
