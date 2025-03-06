@@ -21,6 +21,10 @@
 		0F24A2712D41846800B59677 /* StockPriceData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F24A2702D41846800B59677 /* StockPriceData.swift */; };
 		0F24A2742D4259AB00B59677 /* StockLogoImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F24A2732D4259AB00B59677 /* StockLogoImageView.swift */; };
 		0F24A2782D43DA1800B59677 /* CustomSearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F24A2772D43DA1800B59677 /* CustomSearchBar.swift */; };
+		0F2860272D7996CA00A33EEB /* StockItem.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0F2860252D7996CA00A33EEB /* StockItem.xcdatamodeld */; };
+		0F28602F2D7997ED00A33EEB /* StockItem+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F28602D2D7997ED00A33EEB /* StockItem+CoreDataClass.swift */; };
+		0F2860302D7997ED00A33EEB /* StockItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F28602E2D7997ED00A33EEB /* StockItem+CoreDataProperties.swift */; };
+		0F2860322D79A86F00A33EEB /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F2860312D79A86F00A33EEB /* CoreDataManager.swift */; };
 		0FF03EC02CF5CEF400519D49 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF03EBF2CF5CEF400519D49 /* AppDelegate.swift */; };
 		0FF03EC22CF5CEF400519D49 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF03EC12CF5CEF400519D49 /* SceneDelegate.swift */; };
 		0FF03EC42CF5CEF400519D49 /* StocksMainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF03EC32CF5CEF400519D49 /* StocksMainVC.swift */; };
@@ -46,6 +50,10 @@
 		0F24A2702D41846800B59677 /* StockPriceData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockPriceData.swift; sourceTree = "<group>"; };
 		0F24A2732D4259AB00B59677 /* StockLogoImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockLogoImageView.swift; sourceTree = "<group>"; };
 		0F24A2772D43DA1800B59677 /* CustomSearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSearchBar.swift; sourceTree = "<group>"; };
+		0F2860262D7996CA00A33EEB /* StockItem.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = StockItem.xcdatamodel; sourceTree = "<group>"; };
+		0F28602D2D7997ED00A33EEB /* StockItem+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StockItem+CoreDataClass.swift"; sourceTree = "<group>"; };
+		0F28602E2D7997ED00A33EEB /* StockItem+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StockItem+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		0F2860312D79A86F00A33EEB /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		0FF03EBC2CF5CEF400519D49 /* StocksApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StocksApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FF03EBF2CF5CEF400519D49 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0FF03EC12CF5CEF400519D49 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -118,9 +126,18 @@
 			path = CustomUIElements;
 			sourceTree = "<group>";
 		};
+		0F28602C2D79975000A33EEB /* StockItem */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = StockItem;
+			sourceTree = "<group>";
+		};
 		0FF03EB32CF5CEF400519D49 = {
 			isa = PBXGroup;
 			children = (
+				0F28602D2D7997ED00A33EEB /* StockItem+CoreDataClass.swift */,
+				0F28602E2D7997ED00A33EEB /* StockItem+CoreDataProperties.swift */,
 				0FF03EBE2CF5CEF400519D49 /* StocksApp */,
 				0FF03EBD2CF5CEF400519D49 /* Products */,
 			);
@@ -137,6 +154,7 @@
 		0FF03EBE2CF5CEF400519D49 /* StocksApp */ = {
 			isa = PBXGroup;
 			children = (
+				0F28602C2D79975000A33EEB /* StockItem */,
 				0F24A2792D43FF3300B59677 /* CustomUIElements */,
 				0F24A2622D416FD300B59677 /* JsonData */,
 				0F24A25A2D3FC97700B59677 /* Enums */,
@@ -145,7 +163,9 @@
 				0FF03ED62CF5FD3B00519D49 /* StockDetailsCell.swift */,
 				0F115DE32D0A1615005BC43F /* NetworkingManager.swift */,
 				0FF03EDA2CF6103500519D49 /* StockDetails.swift */,
+				0F2860312D79A86F00A33EEB /* CoreDataManager.swift */,
 				0FF03EDC2CF6106F00519D49 /* StocksList.swift */,
+				0F2860252D7996CA00A33EEB /* StockItem.xcdatamodeld */,
 				0FF03ECD2CF5CEF600519D49 /* Info.plist */,
 			);
 			path = StocksApp;
@@ -236,15 +256,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0F28602F2D7997ED00A33EEB /* StockItem+CoreDataClass.swift in Sources */,
 				0F24A2712D41846800B59677 /* StockPriceData.swift in Sources */,
 				0F24A2642D41706300B59677 /* CustomFonts.swift in Sources */,
 				0F24A26F2D41844D00B59677 /* StockLogoNameData.swift in Sources */,
 				0F24A2512D3B9A3000B59677 /* FetchType.swift in Sources */,
 				0FF03EC42CF5CEF400519D49 /* StocksMainVC.swift in Sources */,
+				0F2860272D7996CA00A33EEB /* StockItem.xcdatamodeld in Sources */,
 				0FF03EDB2CF6103500519D49 /* StockDetails.swift in Sources */,
 				0F24A2742D4259AB00B59677 /* StockLogoImageView.swift in Sources */,
 				0F24A2592D3EB3FA00B59677 /* UIColor+rgb.swift in Sources */,
 				0FF03EC02CF5CEF400519D49 /* AppDelegate.swift in Sources */,
+				0F2860302D7997ED00A33EEB /* StockItem+CoreDataProperties.swift in Sources */,
+				0F2860322D79A86F00A33EEB /* CoreDataManager.swift in Sources */,
 				0F24A2532D3B9A5700B59677 /* NetworkingError.swift in Sources */,
 				0F24A2552D3E915500B59677 /* FavoriteState.swift in Sources */,
 				0F24A26C2D41785000B59677 /* AppColors.swift in Sources */,
@@ -465,6 +489,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		0F2860252D7996CA00A33EEB /* StockItem.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				0F2860262D7996CA00A33EEB /* StockItem.xcdatamodel */,
+			);
+			currentVersion = 0F2860262D7996CA00A33EEB /* StockItem.xcdatamodel */;
+			path = StockItem.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 0FF03EB42CF5CEF400519D49 /* Project object */;
 }

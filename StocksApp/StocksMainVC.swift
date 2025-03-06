@@ -124,8 +124,15 @@ final class StocksMainVC: UIViewController {
         var tempStocks: [StockDetails] = []
         let dispatchGroup = DispatchGroup()
 
+        let storedStocks = CoreDataManager.shared.fetchStocks()
+
         for ticker in stocksList.tickerNames {
-            var stock = StockDetails(ticker: ticker, isFavorite: .notFavorite, name: "", currentPrice: "", priceChange: "", logo: "", priceChangeColor: .green, logoImage: .star)
+            var stock = StockDetails(
+                ticker: ticker,
+                isFavorite: storedStocks[ticker] == true ? .favorite : .notFavorite,
+                name: "", currentPrice: "", priceChange: "",
+                logo: "", priceChangeColor: .green, logoImage: .star
+            )
 
             dispatchGroup.enter()
             networkingManager.fetchData(type: .logoAndName(ticker), responseType: StockLogoNameData.self) { result in
@@ -167,7 +174,6 @@ final class StocksMainVC: UIViewController {
             self.stocksTableview.reloadData()
         }
     }
-
     
     //MARK: -Helper Functions
     
@@ -327,10 +333,15 @@ extension StocksMainVC: UITableViewDelegate, UITableViewDataSource {
 extension StocksMainVC: StarColorDelegate {
     func didTapStar(_ index: IndexPath) {
         let stock = displayedStocksList[index.section]
-    
+
         if let originalIndex = fetchedStocks.firstIndex(where: { $0.ticker == stock.ticker }) {
             let stockToUpdate = fetchedStocks[originalIndex]
             fetchedStocks[originalIndex].isFavorite = stockToUpdate.isFavorite == .favorite ? .notFavorite : .favorite
+            
+            CoreDataManager.shared.saveStock(
+                ticker: stockToUpdate.ticker,
+                isFavorite: fetchedStocks[originalIndex].isFavorite == .favorite
+            )
         }
         
         if showingFavorites {
