@@ -28,6 +28,7 @@
 		0F2860342D79B4B800A33EEB /* EmptySearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F2860332D79B4B800A33EEB /* EmptySearchView.swift */; };
 		0F28603C2D79CD2B00A33EEB /* SearchRequest+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F28603A2D79CD2B00A33EEB /* SearchRequest+CoreDataClass.swift */; };
 		0F28603D2D79CD2B00A33EEB /* SearchRequest+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F28603B2D79CD2B00A33EEB /* SearchRequest+CoreDataProperties.swift */; };
+		0FDC68932D8162D400E4A8E2 /* StockChartVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FDC68922D8162D400E4A8E2 /* StockChartVC.swift */; };
 		0FF03EC02CF5CEF400519D49 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF03EBF2CF5CEF400519D49 /* AppDelegate.swift */; };
 		0FF03EC22CF5CEF400519D49 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF03EC12CF5CEF400519D49 /* SceneDelegate.swift */; };
 		0FF03EC42CF5CEF400519D49 /* StocksMainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FF03EC32CF5CEF400519D49 /* StocksMainVC.swift */; };
@@ -60,6 +61,7 @@
 		0F2860332D79B4B800A33EEB /* EmptySearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptySearchView.swift; sourceTree = "<group>"; };
 		0F28603A2D79CD2B00A33EEB /* SearchRequest+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SearchRequest+CoreDataClass.swift"; sourceTree = "<group>"; };
 		0F28603B2D79CD2B00A33EEB /* SearchRequest+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SearchRequest+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		0FDC68922D8162D400E4A8E2 /* StockChartVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockChartVC.swift; sourceTree = "<group>"; };
 		0FF03EBC2CF5CEF400519D49 /* StocksApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StocksApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FF03EBF2CF5CEF400519D49 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0FF03EC12CF5CEF400519D49 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -173,6 +175,7 @@
 				0F115DE32D0A1615005BC43F /* NetworkingManager.swift */,
 				0FF03EDA2CF6103500519D49 /* StockDetails.swift */,
 				0F2860312D79A86F00A33EEB /* CoreDataManager.swift */,
+				0FDC68922D8162D400E4A8E2 /* StockChartVC.swift */,
 				0FF03EDC2CF6106F00519D49 /* StocksList.swift */,
 				0F2860252D7996CA00A33EEB /* StockItem.xcdatamodeld */,
 				0FF03ECD2CF5CEF600519D49 /* Info.plist */,
@@ -287,6 +290,7 @@
 				0F28603D2D79CD2B00A33EEB /* SearchRequest+CoreDataProperties.swift in Sources */,
 				0FF03EDD2CF6106F00519D49 /* StocksList.swift in Sources */,
 				0F115DE42D0A1615005BC43F /* NetworkingManager.swift in Sources */,
+				0FDC68932D8162D400E4A8E2 /* StockChartVC.swift in Sources */,
 				0FF03ED72CF5FD3B00519D49 /* StockDetailsCell.swift in Sources */,
 				0F24A2782D43DA1800B59677 /* CustomSearchBar.swift in Sources */,
 			);

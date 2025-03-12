@@ -325,6 +325,12 @@ extension StocksMainVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         stocksTableview.deselectRow(at: indexPath, animated: true)
+        
+        let chartVC = StockChartVC()
+        chartVC.modalPresentationStyle = .fullScreen
+        let stock = displayedStocksList[indexPath.section]
+        chartVC.currentStock = stock
+        present(chartVC, animated: true, completion: nil)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
