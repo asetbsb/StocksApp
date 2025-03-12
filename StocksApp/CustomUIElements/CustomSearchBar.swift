@@ -11,7 +11,22 @@ class CustomSearchBar: UITextField {
     
     let glassImageView = UIImageView(image: UIImage(systemName: "magnifyingglass"))
     let clearButton = UIButton()
-    let arrowImageView = UIImageView(image: UIImage(systemName: "arrow.left"))
+    let arrowButton = UIButton()
+    
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        let convertedClearButtonPoint = clearButton.convert(point, from: self)
+        if clearButton.bounds.contains(convertedClearButtonPoint) {
+            return clearButton
+        }
+
+        let convertedArrowButtonPoint = arrowButton.convert(point, from: self)
+        if arrowButton.bounds.contains(convertedArrowButtonPoint) {
+            return arrowButton
+        }
+
+        return super.hitTest(point, with: event)
+    }
+
     
     func setupUI() {
         layer.borderWidth = 2
@@ -33,27 +48,32 @@ class CustomSearchBar: UITextField {
         clearButton.contentMode = .scaleAspectFit
         clearButton.tintColor = .black
         clearButton.translatesAutoresizingMaskIntoConstraints = false
+        clearButton.isUserInteractionEnabled = true
 
         glassImageView.contentMode = .scaleAspectFit
         glassImageView.tintColor = .black
         glassImageView.translatesAutoresizingMaskIntoConstraints = false
         
-        arrowImageView.contentMode = .scaleAspectFit
-        arrowImageView.tintColor = .black
-        arrowImageView.isUserInteractionEnabled = true
-        arrowImageView.translatesAutoresizingMaskIntoConstraints = false
+        arrowButton.setImage(UIImage(systemName: "arrow.left"), for: .normal)
+        arrowButton.contentMode = .scaleAspectFit
+        arrowButton.tintColor = .black
+        arrowButton.translatesAutoresizingMaskIntoConstraints = false
+        arrowButton.isUserInteractionEnabled = true
 
         addImages()
     }
     
     func addImages() {
         addSubview(glassImageView)
-        addSubview(arrowImageView)
+        addSubview(arrowButton)
         addSubview(clearButton)
         
         setConstraints()
+        bringSubviewToFront(clearButton)
+        bringSubviewToFront(arrowButton)
+        
         clearButton.isHidden = true
-        arrowImageView.isHidden = true
+        arrowButton.isHidden = true
     }
     
     func setConstraints() {
@@ -68,10 +88,10 @@ class CustomSearchBar: UITextField {
             glassImageView.widthAnchor.constraint(equalTo: self.heightAnchor, multiplier: 0.5),
             glassImageView.heightAnchor.constraint(equalTo: glassImageView.widthAnchor),
             
-            arrowImageView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 24),
-            arrowImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-            arrowImageView.widthAnchor.constraint(equalTo: self.heightAnchor, multiplier: 0.5),
-            arrowImageView.heightAnchor.constraint(equalTo: arrowImageView.widthAnchor)
+            arrowButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 24),
+            arrowButton.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+            arrowButton.widthAnchor.constraint(equalTo: self.heightAnchor, multiplier: 0.5),
+            arrowButton.heightAnchor.constraint(equalTo: arrowButton.widthAnchor)
         ])
     }
     
@@ -92,6 +112,6 @@ class CustomSearchBar: UITextField {
     func toggleImages(isSearchEmpty: Bool) {
         glassImageView.isHidden = isSearchEmpty ? false : true
         clearButton.isHidden = isSearchEmpty ? true : false
-        arrowImageView.isHidden = isSearchEmpty ? true : false
+        arrowButton.isHidden = isSearchEmpty ? true : false
     }
 }

@@ -50,8 +50,7 @@ final class StocksMainVC: UIViewController {
         
         tf.clearButton.addTarget(self, action: #selector(clearClicked), for: .touchUpInside)
         tf.addTarget(self, action: #selector(searchRecords(_ :)), for: .editingChanged)
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(resetToInitialState))
-        tf.arrowImageView.addGestureRecognizer(tapGesture)
+        tf.arrowButton.addTarget(self, action: #selector(showSearchHistory), for: .touchUpInside)
 
         tf.translatesAutoresizingMaskIntoConstraints = false
         return tf
@@ -110,6 +109,16 @@ final class StocksMainVC: UIViewController {
         return tv
     }()
     
+    private lazy var emptySearchView: EmptySearchView = {
+        let view = EmptySearchView()
+        view.addSubviews()
+        view.setupConstraints()
+        view.isHidden = true
+        
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     //MARK: -Lifecycle
     
     override func viewDidLoad() {
@@ -124,8 +133,15 @@ final class StocksMainVC: UIViewController {
         var tempStocks: [StockDetails] = []
         let dispatchGroup = DispatchGroup()
 
+        let storedStocks = CoreDataManager.shared.fetchStocks()
+
         for ticker in stocksList.tickerNames {
-            var stock = StockDetails(ticker: ticker, isFavorite: .notFavorite, name: "", currentPrice: "", priceChange: "", logo: "", priceChangeColor: .green, logoImage: .star)
+            var stock = StockDetails(
+                ticker: ticker,
+                isFavorite: storedStocks[ticker] == true ? .favorite : .notFavorite,
+                name: "", currentPrice: "", priceChange: "",
+                logo: "", priceChangeColor: .green, logoImage: .star
+            )
 
             dispatchGroup.enter()
             networkingManager.fetchData(type: .logoAndName(ticker), responseType: StockLogoNameData.self) { result in
@@ -167,7 +183,6 @@ final class StocksMainVC: UIViewController {
             self.stocksTableview.reloadData()
         }
     }
-
     
     //MARK: -Helper Functions
     
@@ -194,7 +209,31 @@ final class StocksMainVC: UIViewController {
         view.addSubview(stocksTableview)
     }
     
+    private func toggleSearchViews(showHistory: Bool) {
+        if showHistory {
+            view.addSubview(emptySearchView)
+            buttonsView.isHidden = true
+            stocksTableview.isHidden = true
+            emptySearchView.isHidden = false
+            setupEmptySearchViewConstraints()
+        } else {
+            buttonsView.isHidden = false
+            stocksTableview.isHidden = false
+            emptySearchView.isHidden = true
+        }
+    }
+    
     //MARK: -Constraints
+    
+    private func setupEmptySearchViewConstraints() {
+        let spacing = view.frame.width * 0.07
+        
+        NSLayoutConstraint.activate([
+            emptySearchView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 30),
+            emptySearchView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: spacing),
+            emptySearchView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -spacing)
+        ])
+    }
     
     private func setupConstraints() {
         let leftRightSpacing = view.frame.width * 0.05
@@ -327,10 +366,15 @@ extension StocksMainVC: UITableViewDelegate, UITableViewDataSource {
 extension StocksMainVC: StarColorDelegate {
     func didTapStar(_ index: IndexPath) {
         let stock = displayedStocksList[index.section]
-    
+
         if let originalIndex = fetchedStocks.firstIndex(where: { $0.ticker == stock.ticker }) {
             let stockToUpdate = fetchedStocks[originalIndex]
             fetchedStocks[originalIndex].isFavorite = stockToUpdate.isFavorite == .favorite ? .notFavorite : .favorite
+            
+            CoreDataManager.shared.saveStock(
+                ticker: stockToUpdate.ticker,
+                isFavorite: fetchedStocks[originalIndex].isFavorite == .favorite
+            )
         }
         
         if showingFavorites {
@@ -345,9 +389,21 @@ extension StocksMainVC: StarColorDelegate {
 
 extension StocksMainVC: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        guard let query = textField.text, !query.trimmingCharacters(in: .whitespaces).isEmpty else {
+            return false
+        }
+
+        CoreDataManager.shared.saveSearchQuery(query)
+
+        if let emptySearchView = emptySearchView as? EmptySearchView {
+            emptySearchView.updateSearchHistory()
+        }
+
         searchBar.resignFirstResponder()
+        
         return true
     }
+
     
     @objc func clearClicked() {
         searchBar.text = ""
@@ -356,11 +412,12 @@ extension StocksMainVC: UITextFieldDelegate {
         searchBar.togglePlaceholder(isEmpty: true)
     }
     
-    @objc private func resetToInitialState() {
+    @objc private func showSearchHistory() {
         searchBar.text = ""
         searchText = ""
-        searchBar.toggleImages(isSearchEmpty: true)
-        searchBar.togglePlaceholder(isEmpty: false)
+        searchBar.clearButton.isHidden = true
+        searchBar.togglePlaceholder(isEmpty: true)
+        toggleSearchViews(showHistory: true)
     }
 
     @objc func searchRecords(_ textField: UITextField) {
@@ -369,6 +426,9 @@ extension StocksMainVC: UITextFieldDelegate {
             searchBar.toggleImages(isSearchEmpty: true)
         } else {
             searchBar.toggleImages(isSearchEmpty: false)
+            if emptySearchView.isHidden == false {
+                toggleSearchViews(showHistory: false)
+            }
         }
     }
 }
