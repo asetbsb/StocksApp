@@ -149,7 +149,8 @@ class EmptySearchView: UIView {
 
     func updateSearchHistory() {
         let searchHistory = CoreDataManager.shared.fetchSearchHistory()
-        secondVerticalStack.arrangedSubviews.forEach { $0.removeFromSuperview() } // Clear old views
-        populateVerticalStackView(secondVerticalStack, with: searchHistory) // Load new data
+        secondVerticalStack.arrangedSubviews.forEach { $0.removeFromSuperview() } 
+        populateVerticalStackView(secondVerticalStack, with: searchHistory)
     }
 }
+

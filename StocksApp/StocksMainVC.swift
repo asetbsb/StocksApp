@@ -399,7 +399,6 @@ extension StocksMainVC: UITextFieldDelegate {
             emptySearchView.updateSearchHistory()
         }
 
-        // Dismiss the keyboard
         searchBar.resignFirstResponder()
         
         return true

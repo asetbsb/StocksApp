@@ -36,7 +36,9 @@ final class CoreDataManager {
             let stocks = try context.fetch(fetchRequest)
             var stockDict = [String: Bool]()
             for stock in stocks {
-                stockDict[stock.ticker ?? ""] = stock.isFavorite
+                if let ticker = stock.ticker {
+                    stockDict[ticker] = stock.isFavorite
+                }
             }
             return stockDict
         } catch {
@@ -67,12 +69,12 @@ final class CoreDataManager {
     // MARK: - Search History Management
     func saveSearchQuery(_ query: String) {
         let fetchRequest: NSFetchRequest<SearchRequest> = SearchRequest.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "query == %@", query) // Avoid duplicates
+        fetchRequest.predicate = NSPredicate(format: "query == %@", query) 
 
         do {
             let results = try context.fetch(fetchRequest)
             if let existingSearch = results.first {
-                existingSearch.timestamp = Date() // Update timestamp
+                existingSearch.timestamp = Date()
             } else {
                 let newSearch = SearchRequest(context: context)
                 newSearch.query = query
